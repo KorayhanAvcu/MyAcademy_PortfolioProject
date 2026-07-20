@@ -1,0 +1,187 @@
+﻿
+@*
+   Head
+*@
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Alex Dev | Portfolio</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&amp;display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script id="tailwind-config">
+          tailwind.config = {
+            darkMode: "class",
+            theme: {
+              extend: {
+                "colors": {
+                        "on-secondary": "#313030",
+                        "on-error-container": "#ffdad6",
+                        "on-tertiary-fixed-variant": "#703700",
+                        "tertiary-container": "#d97721",
+                        "surface-container-lowest": "#0b0f10",
+                        "inverse-on-surface": "#2d3133",
+                        "on-surface": "#e0e3e5",
+                        "surface-bright": "#363a3b",
+                        "surface-container-low": "#191c1e",
+                        "background": "#101415",
+                        "secondary-container": "#4a4949",
+                        "primary-fixed-dim": "#c0c1ff",
+                        "primary-container": "#8083ff",
+                        "on-primary-container": "#0d0096",
+                        "on-secondary-fixed": "#1c1b1b",
+                        "surface-variant": "#323537",
+                        "tertiary-fixed": "#ffdcc5",
+                        "on-tertiary": "#4f2500",
+                        "surface-container-high": "#272a2c",
+                        "surface": "#101415",
+                        "error-container": "#93000a",
+                        "error": "#ffb4ab",
+                        "on-secondary-container": "#bab8b7",
+                        "tertiary": "#ffb783",
+                        "primary": "#c0c1ff",
+                        "surface-container": "#1d2022",
+                        "on-primary-fixed-variant": "#2f2ebe",
+                        "secondary-fixed-dim": "#c8c6c5",
+                        "secondary": "#c8c6c5",
+                        "on-background": "#e0e3e5",
+                        "outline": "#908fa0",
+                        "on-primary-fixed": "#07006c",
+                        "on-surface-variant": "#c7c4d7",
+                        "on-tertiary-container": "#452000",
+                        "surface-container-highest": "#323537",
+                        "on-secondary-fixed-variant": "#474646",
+                        "primary-fixed": "#e1e0ff",
+                        "surface-dim": "#101415",
+                        "outline-variant": "#464554",
+                        "inverse-surface": "#e0e3e5",
+                        "on-tertiary-fixed": "#301400",
+                        "inverse-primary": "#494bd6",
+                        "on-primary": "#1000a9",
+                        "on-error": "#690005",
+                        "surface-tint": "#c0c1ff",
+                        "tertiary-fixed-dim": "#ffb783",
+                        "secondary-fixed": "#e5e2e1"
+                },
+                "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                },
+                "spacing": {
+                        "section-padding-mobile": "64px",
+                        "stack-sm": "8px",
+                        "stack-md": "16px",
+                        "container-max": "1200px",
+                        "stack-lg": "32px",
+                        "gutter": "24px",
+                        "section-padding-desktop": "120px"
+                },
+                "fontFamily": {
+                        "body-md": [
+                                "Inter"
+                        ],
+                        "label-sm": [
+                                "Inter"
+                        ],
+                        "display-lg": [
+                                "Inter"
+                        ],
+                        "body-lg": [
+                                "Inter"
+                        ],
+                        "display-lg-mobile": [
+                                "Inter"
+                        ],
+                        "headline-md": [
+                                "Inter"
+                        ]
+                },
+                "fontSize": {
+                        "body-md": [
+                                "16px",
+                                {
+                                        "lineHeight": "24px",
+                                        "fontWeight": "400"
+                                }
+                        ],
+                        "label-sm": [
+                                "12px",
+                                {
+                                        "lineHeight": "16px",
+                                        "letterSpacing": "0.05em",
+                                        "fontWeight": "600"
+                                }
+                        ],
+                        "display-lg": [
+                                "72px",
+                                {
+                                        "lineHeight": "80px",
+                                        "letterSpacing": "-0.04em",
+                                        "fontWeight": "800"
+                                }
+                        ],
+                        "body-lg": [
+                                "18px",
+                                {
+                                        "lineHeight": "28px",
+                                        "fontWeight": "400"
+                                }
+                        ],
+                        "display-lg-mobile": [
+                                "40px",
+                                {
+                                        "lineHeight": "48px",
+                                        "letterSpacing": "-0.02em",
+                                        "fontWeight": "800"
+                                }
+                        ],
+                        "headline-md": [
+                                "32px",
+                                {
+                                        "lineHeight": "40px",
+                                        "letterSpacing": "-0.02em",
+                                        "fontWeight": "600"
+                                }
+                        ]
+                }
+        },
+            },
+          }
+    </script>
+    <style>
+        .glass-card {
+            background: rgba(30, 30, 30, 0.6);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .text-gradient {
+            background: linear-gradient(to right, #c0c1ff, #8083ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .glow-accent {
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(192,193,255,0.15) 0%, rgba(16,20,21,0) 70%);
+            border-radius: 50%;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        /* Hide scrollbar for slider */
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+</head>

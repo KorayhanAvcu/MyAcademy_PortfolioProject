@@ -1,0 +1,36 @@
+﻿@model UserMessage
+
+<div class="glass-card p-stack-lg rounded-xl">
+    <form asp-controller="Default" asp-action="CreateUserMessage" method="post" class="flex flex-col gap-stack-md">
+
+        <div>
+            <label asp-for="Name" class="font-label-sm text-label-sm text-on-surface-variant block mb-2"></label>
+            <input asp-for="Name"
+                   class="w-full bg-surface-variant/50 border border-outline-variant rounded-md px-4 py-3 text-on-background focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                   placeholder="John Doe" />
+            <span class="text-danger" asp-validation-for="Name"></span>
+        </div>
+
+        <div>
+            <label asp-for="Email" class="font-label-sm text-label-sm text-on-surface-variant block mb-2"></label>
+            <input asp-for="Email"
+                   class="w-full bg-surface-variant/50 border border-outline-variant rounded-md px-4 py-3 text-on-background focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                   placeholder="john@example.com" />
+            <span class="text-danger" asp-validation-for="Email"></span>
+        </div>
+
+        <div>
+            <label asp-for="MessageBody" class="font-label-sm text-label-sm text-on-surface-variant block mb-2"></label>
+            <textarea asp-for="MessageBody"
+                      class="w-full bg-surface-variant/50 border border-outline-variant rounded-md px-4 py-3 text-on-background focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all min-h-[150px]"
+                      placeholder="Bana projenizden bahsedin..."></textarea>
+            <span class="text-danger" asp-validation-for="MessageBody"></span>
+        </div>
+
+        <button type="submit"
+                class="w-full px-8 py-4 bg-primary text-on-primary rounded-DEFAULT font-label-sm text-label-sm hover:opacity-90 transition-opacity mt-2">
+            Send Message
+        </button>
+
+    </form>
+</div>

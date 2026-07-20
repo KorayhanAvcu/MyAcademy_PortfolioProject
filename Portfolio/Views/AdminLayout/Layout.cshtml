@@ -1,0 +1,50 @@
+﻿
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+
+<html class="light" lang="tr">
+@await Component.InvokeAsync("_AdminLayoutHead")
+<body class="font-body-md text-body-md">
+    @await Component.InvokeAsync("_AdminLayoutSidebar")
+    @await Component.InvokeAsync("_AdminLayoutTopnavbar")
+    <!-- Main Content Area -->
+    <main class="ml-[260px] pt-16 min-h-screen p-lg">
+        <!-- Page Title & Stats -->
+        
+        <div class="container">
+            <div class="mb-xl">
+                <h1 class="font-h1 text-h1 text-on-surface mb-lg">@ViewData["Title"]</h1>
+
+            </div>
+            @RenderBody()
+        </div>
+    </main>
+    
+    <script>
+        // Simple micro-interactions
+        document.querySelectorAll('button, a').forEach(el => {
+            el.addEventListener('mousedown', () => {
+                el.classList.add('opacity-80');
+            });
+            el.addEventListener('mouseup', () => {
+                el.classList.remove('opacity-80');
+            });
+        });
+
+        // Search bar focus effect
+        const searchInput = document.querySelector('input[type="text"]');
+        searchInput.addEventListener('focus', () => {
+            searchInput.parentElement.classList.add('w-80');
+        });
+        searchInput.addEventListener('blur', () => {
+            searchInput.parentElement.classList.remove('w-80');
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    @RenderSection("Scripts", required: false)
+</body>
+</html>

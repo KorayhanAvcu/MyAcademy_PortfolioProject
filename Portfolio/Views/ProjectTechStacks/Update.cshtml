@@ -1,0 +1,58 @@
+﻿@model ProjectTechStackCreateVM
+
+@{
+    ViewData["Title"] = "Proje Teknolojileri Güncelle";
+    Layout = "~/Views/AdminLayout/Layout.cshtml";
+}
+
+<div class="card shadow-sm border-0">
+    <div class="card-header bg-white">
+        <h5 class="mb-0">Proje Teknolojilerini Güncelle</h5>
+    </div>
+
+    <div class="card-body bg-white">
+
+        <form method="post">
+
+            <div class="mb-3">
+                <label asp-for="ProjectId" class="form-label">Proje</label>
+                <select asp-for="ProjectId"
+                        asp-items="@ViewBag.projects"
+                        class="form-select">
+                </select>
+                <span asp-validation-for="ProjectId" class="text-danger"></span>
+            </div>
+
+            <div class="mb-4">
+                <label asp-for="TechStackIds" class="form-label">Teknolojiler</label>
+                <select asp-for="TechStackIds"
+                        asp-items="@ViewBag.techStacks"
+                        id="techStacks"
+                        class="form-select"
+                        multiple>
+                </select>
+                <span asp-validation-for="TechStackIds" class="text-danger"></span>
+            </div>
+
+            <div class="d-flex justify-content-end">
+                <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-check-circle"></i> Güncelle
+                </button>
+            </div>
+
+        </form>
+
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('#techStacks').select2({
+                placeholder: "Teknoloji Seçiniz",
+                allowClear: true,
+                width: '100%'
+            });
+        });
+    </script>
+}

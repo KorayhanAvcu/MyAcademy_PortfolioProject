@@ -1,0 +1,25 @@
+﻿@model List<About>
+@*
+    Default About
+*@
+<section class="py-section-padding-mobile md:py-section-padding-desktop px-gutter relative bg-surface-container-lowest" id="about">
+    <div class="max-w-container-max mx-auto grid grid-cols-1 md:grid-cols-2 gap-stack-lg items-center">
+        @foreach(var item in Model)
+        {
+            <div class="relative w-full aspect-square rounded-xl overflow-hidden glass-card">
+                <img alt="Professional portrait" class="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-500" data-alt="Professional portrait of a software engineer in a modern workspace" src="@item.ImageUrl" />
+            </div>
+            <div class="flex flex-col gap-stack-md">
+                <h2 class="font-headline-md text-headline-md text-on-background">@item.Title</h2>
+                <p class="font-body-md text-body-md text-on-surface-variant">@item.Descripton</p>
+                
+
+            </div>
+        }
+        
+        @await Component.InvokeAsync("_DefaultAboutSkills")
+        
+        
+       
+    </div>
+</section>

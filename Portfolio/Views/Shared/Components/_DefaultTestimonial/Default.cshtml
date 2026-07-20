@@ -1,0 +1,38 @@
+﻿@model List<Testimonial>
+@*
+    Yorumlar
+*@
+<section class="py-section-padding-mobile md:py-section-padding-desktop px-gutter relative" id="testimonials">
+    <div class="max-w-container-max mx-auto">
+        <h2 class="font-headline-md text-headline-md text-on-background mb-stack-lg text-center">Hakkımda Söylenenler</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-stack-lg">
+            <!-- Testimonial 1 -->
+            @foreach(var item in Model)
+            {
+                <div class="glass-card p-stack-lg rounded-xl flex flex-col gap-stack-sm relative">
+                    <div class="flex gap-1 mb-2">
+
+                        @for (int i = 0; i < item.Rating; i++)
+                        {
+                            <span class="material-symbols-outlined text-primary text-xl"
+                                  style="font-variation-settings: 'FILL' 1;">
+                                star
+                            </span>
+                        }
+                        
+                    </div>
+                    <p class="font-body-md text-body-md text-on-surface-variant flex-grow">"@item.Comment"</p>
+                    <div class="mt-stack-md flex items-center gap-3 border-t border-outline-variant/30 pt-stack-sm">
+                        <div class="w-10 h-10 rounded-full bg-surface-variant flex items-center justify-center text-on-surface-variant font-bold">@item.Initials</div>
+                        <div>
+                            <h4 class="font-label-sm text-label-sm text-on-background">@item.FirstName @item.LastName</h4>
+                            <p class="font-label-sm text-label-sm text-on-surface-variant font-normal">@item.Title</p>
+                        </div>
+                    </div>
+                </div>
+            }
+            
+           
+        </div>
+    </div>
+</section>

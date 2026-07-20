@@ -1,0 +1,52 @@
+﻿@model Project
+
+@{
+    ViewData["Title"] = "Proje Güncelle";
+    Layout = "~/Views/AdminLayout/Layout.cshtml";
+}
+
+<div class="card shadow-sm border-0">
+    <div class="card-header bg-white">
+        <h5 class="mb-0">Proje Bilgilerini Güncelle</h5>
+    </div>
+
+    <div class="card-body bg-white">
+
+        <form method="post">
+
+            <input type="hidden" asp-for="Id" />
+
+            <div class="mb-3">
+                <label asp-for="Name" class="form-label">Proje Adı</label>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="ImageUrl" class="form-label">Görsel URL</label>
+                <input asp-for="ImageUrl" class="form-control" />
+                <span asp-validation-for="ImageUrl" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Description" class="form-label">Proje Açıklaması</label>
+                <textarea asp-for="Description" class="form-control" rows="4"></textarea>
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+
+            <div class="mb-4">
+                <label asp-for="GithubUrl" class="form-label">GitHub URL</label>
+                <input asp-for="GithubUrl" type="url" class="form-control" />
+                <span asp-validation-for="GithubUrl" class="text-danger"></span>
+            </div>
+
+            <div class="d-flex justify-content-end">
+                <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-check-circle"></i> Güncelle
+                </button>
+            </div>
+
+        </form>
+
+    </div>
+</div>

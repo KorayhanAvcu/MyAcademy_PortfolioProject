@@ -1,0 +1,76 @@
+﻿
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html class="dark scroll-smooth" lang="en">
+@await Component.InvokeAsync("_DefaultHead")
+<body class="bg-background text-on-background antialiased selection:bg-primary/30 selection:text-primary">
+    <!-- TopNavBar -->
+    @await Component.InvokeAsync("_DefaultTopNavbar")
+    <main class="pt-20">
+        @await Component.InvokeAsync("_DefaultBanner")
+        <!-- About Section -->
+        @await Component.InvokeAsync("_DefaultAbout")
+        <!-- Experience & Education Section -->
+        <section class="py-section-padding-mobile md:py-section-padding-desktop px-gutter relative" id="experience">
+            <div class="max-w-container-max mx-auto">
+                <div class="text-center mb-stack-lg">
+                    <h2 class="font-headline-md text-headline-md text-on-background">Özgeçmiş</h2>
+                    <p class="font-body-md text-body-md text-on-surface-variant mt-2">Mesleki kariyerim ve akademik geçmişim.</p>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-stack-lg">
+                    <!-- Experience -->
+                    @await Component.InvokeAsync("_DefaultExperience")
+                    <!-- Education -->
+                    @await Component.InvokeAsync("_DefaultEducation")
+                </div>
+            </div>
+        </section>
+        <!-- Services Section -->
+        @await Component.InvokeAsync("_DefaultService")
+        <!-- Portfolio Slider Section -->
+        @await Component.InvokeAsync("_DefaultPortfolio")
+        <!-- Testimonials Section -->
+        @await Component.InvokeAsync("_DefaultTestimonial")
+        <!-- Contact Section -->
+        <section class="py-section-padding-mobile md:py-section-padding-desktop px-gutter relative bg-surface-container-lowest" id="contact">
+            <div class="max-w-container-max mx-auto grid grid-cols-1 lg:grid-cols-2 gap-stack-lg">
+                @await Component.InvokeAsync("_DefaultContact")
+                @await Component.InvokeAsync("_DefaultContactForm")
+            </div>
+        </section>
+        
+        <!-- Footer -->
+        @await Component.InvokeAsync("_DefaultFooter")
+    </main>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const slider = document.getElementById('slider-container');
+            const prevBtn = document.getElementById('prev-btn');
+            const nextBtn = document.getElementById('next-btn');
+
+            if(slider && prevBtn && nextBtn) {
+                const getScrollAmount = () => {
+                    const card = slider.querySelector('.snap-center');
+                    if (!card) return 0;
+                    const cardWidth = card.offsetWidth;
+                    const gap = parseFloat(getComputedStyle(slider).gap) || 0;
+                    return cardWidth + gap;
+                };
+
+                prevBtn.addEventListener('click', () => {
+                    slider.scrollBy({ left: -getScrollAmount(), behavior: 'smooth' });
+                });
+
+                nextBtn.addEventListener('click', () => {
+                    slider.scrollBy({ left: getScrollAmount(), behavior: 'smooth' });
+                });
+            }
+        });
+    </script>
+</body>
+</html>
+

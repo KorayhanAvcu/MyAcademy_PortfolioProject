@@ -1,0 +1,18 @@
+﻿@model List<SkillGroupVM>
+
+<div class="grid grid-cols-2 gap-stack-md mt-stack-sm">
+
+    @foreach (var item in Model)
+    {
+        <div>
+            <h4 class="font-label-sm text-label-sm text-primary mb-1">
+                @item.CategoryName
+            </h4>
+
+            <p class="font-body-md text-body-md text-on-surface-variant">
+                @item.Skills
+            </p>
+        </div>
+    }
+
+</div>

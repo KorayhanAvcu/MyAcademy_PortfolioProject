@@ -1,0 +1,25 @@
+﻿@model List<Banner>
+@*
+    Banner
+*@
+<!-- Hero Section -->
+<section class="relative min-h-[921px] flex items-center pt-section-padding-mobile pb-section-padding-mobile md:pt-section-padding-desktop md:pb-section-padding-desktop px-gutter overflow-hidden" id="hero">
+    <div class="glow-accent top-1/4 left-1/4"></div>
+    @foreach(var item in Model)
+    {
+        <div class="max-w-container-max mx-auto w-full grid grid-cols-1 lg:grid-cols-2 gap-stack-lg items-center relative z-10">
+            <div class="flex flex-col gap-stack-md">
+                <h1 class="font-display-lg-mobile text-display-lg-mobile md:font-display-lg md:text-display-lg text-on-background">@item.Title</h1>
+                <p class="font-body-lg text-body-lg text-on-surface-variant max-w-lg">@item.Description</p>
+                <div class="flex items-center gap-stack-md mt-stack-md">
+                    <a class="inline-flex items-center justify-center px-8 py-4 bg-primary text-on-primary rounded-DEFAULT font-label-sm text-label-sm hover:opacity-90 transition-opacity" href="#portfolio">Çalışmalarıma Göz At</a>
+                    <a class="inline-flex items-center justify-center px-8 py-4 border border-outline text-on-background rounded-DEFAULT font-label-sm text-label-sm hover:bg-surface-variant/30 transition-colors" href="#contact">Bana Ulaşın</a>
+                </div>
+            </div>
+            <div class="relative w-full aspect-square md:aspect-[4/3] lg:aspect-square rounded-xl overflow-hidden glass-card">
+                <img alt="Abstract code on screen" class="w-full h-full object-cover opacity-80 mix-blend-luminosity hover:mix-blend-normal transition-all duration-700" data-alt="A striking abstract technological composition showing lines of glowing code on a dark computer monitor, creating a modern, minimalist vibe. The environment is dark and moody, illuminated only by the cool blue and intense indigo light radiating from the screen. The scene embodies digital precision, professional software engineering, and premium tech aesthetics, perfect for a high-end dark-mode portfolio hero image." src="@item.ImageUrl" />
+            </div>
+        </div>
+    }
+    
+</section>

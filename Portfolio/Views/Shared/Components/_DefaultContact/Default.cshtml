@@ -1,0 +1,46 @@
+﻿@model List<ContactInfo>
+@*
+    İletişim Alanı
+*@
+
+<div>
+    <h2 class="font-headline-md text-headline-md text-on-background mb-4">Hadi Birlikte Bir Şeyler Yapalım</h2>
+    <p class="font-body-md text-body-md text-on-surface-variant mb-stack-lg max-w-md">Şu anda serbest çalışma için müsaidim ve yeni fırsatlara açığım. Bana ulaşın ve bir sonraki projenizi konuşalım.</p>
+    @foreach (var item in Model)
+    {
+        <div class="space-y-6">
+            <div class="flex items-center gap-4">
+                <div class="w-12 h-12 rounded-full bg-surface-variant flex items-center justify-center text-primary">
+                    <span class="material-symbols-outlined">mail</span>
+                </div>
+                <div>
+                    <h4 class="font-label-sm text-label-sm text-on-surface-variant">Email</h4>
+                    <p class="font-body-md text-body-md text-on-background">@item.Email</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-4">
+                <div class="w-12 h-12 rounded-full bg-surface-variant flex items-center justify-center text-primary">
+                    <span class="material-symbols-outlined">location_on</span>
+                </div>
+                <div>
+                    <h4 class="font-label-sm text-label-sm text-on-surface-variant">Location</h4>
+                    <p class="font-body-md text-body-md text-on-background">@item.Address</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-4">
+                <div class="w-12 h-12 rounded-full bg-surface-variant flex items-center justify-center text-primary">
+                    <span class="material-symbols-outlined">link</span>
+                </div>
+                <div>
+                    <h4 class="font-label-sm text-label-sm text-on-surface-variant">Social Profiles</h4>
+                    <div class="flex gap-4 mt-1">
+                        <a class="text-on-background hover:text-primary transition-colors" href="@item.LinkedinUrl" target="_blank">LinkedIn</a>
+                        <a class="text-on-background hover:text-primary transition-colors" href="@item.GithubUrl" target="_blank">GitHub</a>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+
+</div>

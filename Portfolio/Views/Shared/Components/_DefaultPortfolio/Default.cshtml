@@ -1,0 +1,47 @@
+﻿@model List<ProjectVM>
+@*
+    Projeler
+*@
+<section class="py-section-padding-mobile md:py-section-padding-desktop px-gutter relative overflow-hidden" id="portfolio">
+    <div class="max-w-container-max mx-auto mb-stack-lg flex justify-between items-end">
+        <div>
+            <h2 class="font-headline-md text-headline-md text-on-background">Seçilmiş Çalışmalar</h2>
+            <p class="font-body-md text-body-md text-on-surface-variant mt-2">Son dönemdeki projelerimden oluşan bir derleme.</p>
+        </div>
+        <div class="hidden md:flex gap-4">
+            <button class="p-2 rounded-full border border-outline hover:bg-surface-variant transition-colors text-on-background" id="prev-btn">
+                <span class="material-symbols-outlined">arrow_back</span>
+            </button>
+            <button class="p-2 rounded-full border border-outline hover:bg-surface-variant transition-colors text-on-background" id="next-btn">
+                <span class="material-symbols-outlined">arrow_forward</span>
+            </button>
+        </div>
+    </div>
+    <div class="flex gap-stack-md overflow-x-auto hide-scrollbar pb-8 px-gutter md:px-0 max-w-container-max mx-auto snap-x snap-mandatory" id="slider-container">
+        @foreach(var item in Model)
+        {
+            <div class="min-w-[300px] md:min-w-[400px] lg:min-w-[500px] snap-center glass-card rounded-xl overflow-hidden group">
+                <div class="h-64 overflow-hidden relative">
+                    <img alt="Project" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" src="@item.ImageUrl" />
+                    <div class="absolute inset-0 bg-background/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                        <a class="px-6 py-2 bg-primary text-on-primary rounded-DEFAULT font-label-sm text-label-sm" href="#">View Project</a>
+                    </div>
+                </div>
+                <div class="p-stack-md">
+                    <h3 class="font-body-lg text-body-lg font-semibold text-on-background mb-2">@item.Name</h3>
+                    <p class="font-body-md text-body-md text-on-surface-variant mb-4 line-clamp-2">@item.Description</p>
+                    <div class="flex flex-wrap gap-2">
+                        @foreach (var tech in item.TechStacks)
+                        {
+                            <span class="px-3 py-1 bg-surface-variant rounded-full font-label-sm text-label-sm text-on-surface">
+                                @tech
+                            </span>
+                        }
+                    </div>
+                </div>
+            </div>
+
+        }
+        
+    </div>
+</section>

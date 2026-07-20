@@ -1,0 +1,23 @@
+﻿@model List<Experience>
+@*
+    Deneyimler
+*@
+<div>
+    <h3 class="font-body-lg text-body-lg font-semibold text-on-background mb-stack-md flex items-center gap-2">
+        <span class="material-symbols-outlined text-primary">work</span> Deneyim
+    </h3>
+    <div class="relative border-l border-outline-variant/30 pl-6 ml-3 space-y-stack-lg">
+        @foreach(var item in Model)
+        {
+            <div class="relative">
+                <span class="absolute -left-[31px] top-1 w-4 h-4 rounded-full bg-primary ring-4 ring-background"></span>
+                <h4 class="font-body-lg text-body-lg text-on-background font-semibold">@item.Title</h4>
+                <p class="font-label-sm text-label-sm text-primary mb-2">
+                    @item.Company | @item.StartYear -  @if (item.EndYear != null) {<span>@item.EndYear</span>} else{<span>Devam ediyor</span>}
+                </p>
+                <p class="font-body-md text-body-md text-on-surface-variant">@item.Description</p>
+            </div>
+        }
+        
+    </div>
+</div>

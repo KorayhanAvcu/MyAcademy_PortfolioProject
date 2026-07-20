@@ -1,0 +1,44 @@
+﻿@model Service
+
+@{
+    ViewData["Title"] = "Yeni Hizmet Ekle";
+    Layout = "~/Views/AdminLayout/Layout.cshtml";
+}
+
+<div class="card shadow-sm border-0">
+    <div class="card-header bg-white">
+        <h5 class="mb-0">Yeni Hizmet Ekle</h5>
+    </div>
+
+    <div class="card-body bg-white">
+
+        <form method="post">
+
+            <div class="mb-3">
+                <label asp-for="Icon" class="form-label">İkon</label>
+                <input asp-for="Icon" class="form-control" />
+                <span asp-validation-for="Icon" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Title" class="form-label">Başlık</label>
+                <input asp-for="Title" class="form-control" />
+                <span asp-validation-for="Title" class="text-danger"></span>
+            </div>
+
+            <div class="mb-4">
+                <label asp-for="Description" class="form-label">Açıklama</label>
+                <textarea asp-for="Description" class="form-control" rows="5"></textarea>
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+
+            <div class="d-flex justify-content-end">
+                <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-plus-circle"></i> Kaydet
+                </button>
+            </div>
+
+        </form>
+
+    </div>
+</div>

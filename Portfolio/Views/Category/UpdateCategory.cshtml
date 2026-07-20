@@ -1,0 +1,37 @@
+﻿@model Category
+@{
+    ViewData["Title"] = "Kategori Güncelle";
+    Layout = "~/Views/AdminLayout/Layout.cshtml";
+}
+
+
+<div class="card shadow-sm border-0">
+    <div class="card-header bg-white">
+        <h5 class="mb-0">Yeni Kategori Ekle</h5>
+    </div>
+
+    <div class="card-body bg-white">
+
+        <form method="post">
+            <input type="hidden" asp-for="Id" />
+            <div class="mb-3">
+                <label asp-for="Name" class="form-label">Kategori</label>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+
+            
+
+            <div class="d-flex justify-content-end">
+                <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-plus-circle"></i> Güncelle
+                </button>
+            </div>
+
+        </form>
+
+    </div>
+</div>
+
+
+
