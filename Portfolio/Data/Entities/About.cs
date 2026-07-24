@@ -8,7 +8,7 @@ namespace Portfolio.Data.Entities
         [Required(ErrorMessage = "Başık alanı boş bırakılamaz.")]
         public string Title { get; set; }
         [Required(ErrorMessage = "Hakkımda Açıklaması boş bırakılamaz.")]
-        [MaxLength(100, ErrorMessage = "Hakkımda Açıklaması en fazla 100 karakter olmalıdır.")]
+        [MaxLength(2000, ErrorMessage = "Hakkımda Açıklaması en fazla 2000 karakter olmalıdır.")]
         public string Descripton { get; set; }
         [Required(ErrorMessage = "Görsel Url boş bırakılamaz.")]
         public string ImageUrl { get; set; }

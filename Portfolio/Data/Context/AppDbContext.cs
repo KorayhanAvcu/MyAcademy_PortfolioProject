@@ -10,6 +10,7 @@ namespace Portfolio.Data.Context
             optionsBuilder.UseSqlServer("server=KORAYHAN\\SQLEXPRESS;database=PortfolioDb;integrated security=true;trustServerCertificate=true");
         }
         public DbSet<About> Abouts { get; set; }
+        public DbSet<Admin> Admins { get; set; }
         public DbSet<Banner> Banners { get; set; }
         public DbSet<Category> Categories { get; set; }
         public DbSet<ContactInfo> ContactInfos { get; set; }

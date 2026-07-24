@@ -1,0 +1,201 @@
+﻿@model DashboardViewModel
+@{
+    ViewData["Title"] = "Dashboard";
+    Layout = "~/Views/AdminLayout/Layout.cshtml";
+    
+    
+}
+
+<div class="p-4 md:p-8 space-y-8">
+
+    <!-- KPI Section -->
+    <section class="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
+        <!-- KPI 1 -->
+        <div class="bg-surface-container-lowest p-6 rounded-xl border border-outline-variant shadow-sm hover:shadow-md transition-shadow">
+            <div class="flex justify-between items-start mb-4">
+                <span class="material-symbols-outlined text-primary text-2xl">work</span>
+            </div>
+            <p class="text-on-surface-variant text-label-md mb-1">Toplam Proje</p>
+            <p class="text-headline-md font-bold">@Model.TotalProjects</p>
+        </div>
+        <!-- KPI 2 -->
+        <div class="bg-surface-container-lowest p-6 rounded-xl border border-outline-variant shadow-sm hover:shadow-md transition-shadow">
+            <div class="flex justify-between items-start mb-4">
+                <span class="material-symbols-outlined text-primary text-2xl">history</span>
+            </div>
+            <p class="text-on-surface-variant text-label-md mb-1">Toplam Deneyim</p>
+            <p class="text-headline-md font-bold">@Model.TotalExperiences</p>
+        </div>
+        <!-- KPI 3 -->
+        <div class="bg-surface-container-lowest p-6 rounded-xl border border-outline-variant shadow-sm hover:shadow-md transition-shadow">
+            <div class="flex justify-between items-start mb-4">
+                <span class="material-symbols-outlined text-primary text-2xl">psychology</span>
+            </div>
+            <p class="text-on-surface-variant text-label-md mb-1">Toplam Yetenek</p>
+            <p class="text-headline-md font-bold">@Model.TotalSkills</p>
+        </div>
+        <!-- KPI 4 -->
+        <div class="bg-surface-container-lowest p-6 rounded-xl border border-outline-variant shadow-sm hover:shadow-md transition-shadow relative">
+            <div class="flex justify-between items-start mb-4">
+                <span class="material-symbols-outlined text-primary text-2xl">mail</span>
+                @if (Model.UnreadMessages > 0)
+                {
+                    <span class="px-2 py-0.5 rounded-full bg-error text-white text-[10px] font-bold">@Model.UnreadMessages yeni</span>
+                }
+            </div>
+            <p class="text-on-surface-variant text-label-md mb-1">Toplam Gelen Mesaj</p>
+            <p class="text-headline-md font-bold">@Model.TotalMessages</p>
+        </div>
+        <!-- KPI 5 -->
+        <div class="bg-surface-container-lowest p-6 rounded-xl border border-outline-variant shadow-sm hover:shadow-md transition-shadow">
+            <div class="flex justify-between items-start mb-4">
+                <span class="material-symbols-outlined text-primary text-2xl">handshake</span>
+            </div>
+            <p class="text-on-surface-variant text-label-md mb-1">Hizmetler</p>
+            <p class="text-headline-md font-bold">@Model.TotalServices</p>
+        </div>
+        <!-- KPI 6 -->
+        <div class="bg-surface-container-lowest p-6 rounded-xl border border-outline-variant shadow-sm hover:shadow-md transition-shadow">
+            <div class="flex justify-between items-start mb-4">
+                <span class="material-symbols-outlined text-primary text-2xl">groups</span>
+            </div>
+            <p class="text-on-surface-variant text-label-md mb-1">Referanslar</p>
+            <p class="text-headline-md font-bold">@Model.TotalTestimonials</p>
+        </div>
+    </section>
+
+    <!-- Charts Section (sadece Aylık Mesaj İstatistiği) -->
+    <section class="grid grid-cols-1 gap-8">
+        <div class="bg-surface-container-lowest p-6 rounded-xl border border-outline-variant shadow-sm">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="font-title-md text-title-md font-bold">Aylık Mesaj İstatistiği</h3>
+            </div>
+            @{
+                var maxCount = Model.MessagesByMonth.Any() ? Model.MessagesByMonth.Max(m => m.Count) : 1;
+                if (maxCount == 0) { maxCount = 1; }
+            }
+            <div class="h-64 flex items-end justify-between gap-2 px-2">
+                @foreach (var m in Model.MessagesByMonth)
+                {
+                    var heightPercent = (int)Math.Round((double)m.Count / maxCount * 100);
+                    if (heightPercent < 5 && m.Count > 0) { heightPercent = 5; }
+                    var isLast = m == Model.MessagesByMonth.Last();
+                    <div class="flex-1 @(isLast ? "bg-primary hover:bg-primary-container" : "bg-primary/10 hover:bg-primary/30") transition-colors rounded-t-lg relative group"
+                         style="height:@(heightPercent)%">
+                        <span class="absolute -top-6 left-1/2 -translate-x-1/2 text-[10px] font-bold @(isLast ? "" : "opacity-0 group-hover:opacity-100") transition-opacity">@m.Count</span>
+                    </div>
+                }
+            </div>
+            <div class="flex justify-between mt-4 px-2 text-[10px] text-on-surface-variant font-medium">
+                @foreach (var m in Model.MessagesByMonth)
+                {
+                    var isLast = m == Model.MessagesByMonth.Last();
+                    <span class="@(isLast ? "text-primary font-bold" : "")">@m.MonthLabel</span>
+                }
+            </div>
+        </div>
+    </section>
+
+    <!-- Tables Section -->
+    <section class="grid grid-cols-1 xl:grid-cols-2 gap-8">
+        <!-- Son Eklenen Projeler -->
+        <div class="bg-surface-container-lowest rounded-xl border border-outline-variant shadow-sm overflow-hidden">
+            <div class="p-6 border-b border-outline-variant flex justify-between items-center">
+                <h3 class="font-title-md text-title-md font-bold">Son Eklenen Projeler</h3>
+                <a class="text-primary text-label-md font-semibold hover:underline" href="/Project/Index">Tümünü Gör</a>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left">
+                    <thead>
+                        <tr class="bg-surface-container-low">
+                            <th class="px-6 py-4 font-label-md text-on-surface-variant uppercase tracking-wider">#</th>
+                            <th class="px-6 py-4 font-label-md text-on-surface-variant uppercase tracking-wider">Proje Görseli</th>
+                            <th class="px-6 py-4 font-label-md text-on-surface-variant uppercase tracking-wider">Proje Adı</th>
+                            <th class="px-6 py-4 font-label-md text-on-surface-variant uppercase tracking-wider">Proje Açıklaması</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-surface-container">
+                        @if (!Model.RecentProjects.Any())
+                        {
+                            <tr><td colspan="2" class="px-6 py-8 text-center text-on-surface-variant">Henüz proje eklenmemiş.</td></tr>
+                        }
+                        @foreach (var item in Model.RecentProjects.Select((value, index) => new { value, index }))
+                        {
+                            <tr class="hover:bg-surface-container-low transition-colors">
+                                <td class="px-6 py-4">@(@item.index + 1)</td>
+                                <td class="px-6 py-4">
+                                    <img src="@item.value.ImgUrl"
+                                         alt="@item.value.Title"
+                                         class="w-20 h-12 object-cover rounded-lg border border-outline-variant shadow-sm" />
+                                </td>
+                                <td class="px-6 py-4">@item.value.Title</td>
+                                <td class="px-6 py-4">@item.value.Description</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Son Gelen Mesajlar -->
+        <div class="bg-surface-container-lowest rounded-xl border border-outline-variant shadow-sm overflow-hidden">
+            <div class="p-6 border-b border-outline-variant flex justify-between items-center">
+                <h3 class="font-title-md text-title-md font-bold">Son Gelen Mesajlar</h3>
+                <a class="text-primary text-label-md font-semibold hover:underline" href="/UserMessage/Index">Tümünü Gör</a>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left">
+                    <thead>
+                        <tr class="bg-surface-container-low">
+                            <th class="px-6 py-4 font-label-md text-on-surface-variant uppercase tracking-wider">Gönderen</th>
+                            <th class="px-6 py-4 font-label-md text-on-surface-variant uppercase tracking-wider">Mesaj</th>
+                            <th class="px-6 py-4 font-label-md text-on-surface-variant uppercase tracking-wider text-right">Tarih</th>
+                            <th class="px-6 py-4 font-label-md text-on-surface-variant uppercase tracking-wider text-center">Durum</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-surface-container">
+                        @if (!Model.RecentMessages.Any())
+                        {
+                            <tr><td colspan="4" class="px-6 py-8 text-center text-on-surface-variant">Henüz mesaj gelmemiş.</td></tr>
+                        }
+                        @foreach (var m in Model.RecentMessages)
+                        {
+                            var parts = m.SenderName.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+                            var initials = string.Concat(parts.Select(w => w[0])).ToUpper();
+                            if (initials.Length > 2) { initials = initials.Substring(0, 2); }
+
+                            var preview = m.Subject.Length > 40 ? m.Subject.Substring(0, 40) + "..." : m.Subject;
+
+                            <tr class="hover:bg-surface-container-low transition-colors">
+                                <td class="px-6 py-4">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-8 h-8 rounded-full bg-secondary-container flex items-center justify-center text-xs font-bold">@initials</div>
+                                        <span class="font-body-md font-semibold">@m.SenderName</span>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4 font-body-md truncate max-w-[150px]">@preview</td>
+                                <td class="px-6 py-4 font-body-md text-right text-on-surface-variant">@m.CreatedDate.ToString("dd MMM yyyy")</td>
+                                <td class="px-6 py-4 text-center">
+                                    @if (!m.IsRead)
+                                    {
+                                        <span class="px-3 py-1 rounded-full bg-error-container text-on-error-container text-[11px] font-bold">OKUNMADI</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="px-3 py-1 rounded-full bg-surface-variant text-on-surface-variant text-[11px] font-bold">OKUNDU</span>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+</div>
+
+<!-- Floating Action Button -->
+<a href="/Project/Create" class="fixed bottom-8 right-8 w-14 h-14 bg-primary text-white rounded-xl shadow-lg hover:shadow-xl hover:scale-105 transition-all flex items-center justify-center z-40">
+    <span class="material-symbols-outlined text-3xl">add</span>
+</a>

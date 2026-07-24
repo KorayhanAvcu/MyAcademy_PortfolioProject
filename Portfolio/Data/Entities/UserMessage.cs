@@ -19,5 +19,6 @@ namespace Portfolio.Data.Entities
         public string MessageBody { get; set; }
 
         public bool IsRead { get; set; } = false;
+        public DateTime CreatedDate { get; set; } = DateTime.Now;
     }
 }

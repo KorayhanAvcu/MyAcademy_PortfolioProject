@@ -1,0 +1,262 @@
+﻿@model LoginViewModel
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html class="light" lang="tr">
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>Portfolio Admin Paneli - Giriş</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Geist:wght@400;500;600;700&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Geist:wght@100..900&amp;family=Inter:wght@100..900&amp;display=swap" rel="stylesheet">
+    <script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "on-background": "#191c1e",
+                      "secondary-container": "#d0e1fb",
+                      "surface-container-high": "#e6e8ea",
+                      "surface-container-lowest": "#ffffff",
+                      "inverse-on-surface": "#eff1f3",
+                      "on-secondary-container": "#54647a",
+                      "error": "#ba1a1a",
+                      "on-tertiary-fixed-variant": "#004c6e",
+                      "on-error": "#ffffff",
+                      "primary": "#004ac6",
+                      "error-container": "#ffdad6",
+                      "secondary": "#505f76",
+                      "on-secondary-fixed-variant": "#38485d",
+                      "surface-tint": "#0053db",
+                      "on-secondary": "#ffffff",
+                      "on-tertiary": "#ffffff",
+                      "on-surface-variant": "#434655",
+                      "primary-container": "#2563eb",
+                      "on-primary": "#ffffff",
+                      "on-tertiary-container": "#e4f2ff",
+                      "surface-dim": "#d8dadc",
+                      "surface-container-low": "#f2f4f6",
+                      "inverse-primary": "#b4c5ff",
+                      "tertiary-container": "#0074a6",
+                      "on-surface": "#191c1e",
+                      "surface-container": "#eceef0",
+                      "on-tertiary-fixed": "#001e2f",
+                      "tertiary-fixed": "#c9e6ff",
+                      "on-secondary-fixed": "#0b1c30",
+                      "background": "#f7f9fb",
+                      "surface": "#f7f9fb",
+                      "on-primary-fixed-variant": "#003ea8",
+                      "secondary-fixed-dim": "#b7c8e1",
+                      "on-error-container": "#93000a",
+                      "surface-bright": "#f7f9fb",
+                      "tertiary-fixed-dim": "#89ceff",
+                      "primary-fixed": "#dbe1ff",
+                      "on-primary-container": "#eeefff",
+                      "outline": "#737686",
+                      "tertiary": "#005a82",
+                      "secondary-fixed": "#d3e4fe",
+                      "surface-variant": "#e0e3e5",
+                      "surface-container-highest": "#e0e3e5",
+                      "outline-variant": "#c3c6d7",
+                      "primary-fixed-dim": "#b4c5ff",
+                      "inverse-surface": "#2d3133",
+                      "on-primary-fixed": "#00174b"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "md": "16px",
+                      "base": "4px",
+                      "sm": "12px",
+                      "gutter": "24px",
+                      "2xl": "48px",
+                      "3xl": "64px",
+                      "lg": "24px",
+                      "xl": "32px",
+                      "xs": "8px",
+                      "container-max": "1440px"
+              },
+              "fontFamily": {
+                      "body-md": ["Inter"],
+                      "label-md": ["Geist"],
+                      "headline-lg": ["Geist"],
+                      "headline-xl": ["Geist"],
+                      "headline-md": ["Geist"],
+                      "body-lg": ["Inter"],
+                      "headline-lg-mobile": ["Geist"],
+                      "code": ["Geist"]
+              },
+              "fontSize": {
+                      "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                      "label-md": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "500"}],
+                      "headline-lg": ["28px", {"lineHeight": "36px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                      "headline-xl": ["36px", {"lineHeight": "44px", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                      "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "500"}],
+                      "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                      "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                      "code": ["13px", {"lineHeight": "18px", "fontWeight": "400"}]
+              }
+            },
+          },
+        }
+    </script>
+    <style>
+        body {
+            background-color: #f7f9fb;
+        }
+
+        .login-card {
+            box-shadow: 0px 1px 3px rgba(0,0,0,0.02), 0px 4px 6px rgba(0,0,0,0.03), 0px 10px 15px -3px rgba(0,0,0,0.05);
+        }
+
+        .glass-input {
+            background: #f8fafc;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+            .glass-input:focus {
+                background: #ffffff;
+                box-shadow: 0 0 0 4px rgba(0, 74, 198, 0.1);
+            }
+
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20;
+        }
+
+        .btn-gradient {
+            background: linear-gradient(to bottom, #004ac6, #003ea8);
+        }
+
+        .field-error {
+            display: block;
+            color: #ba1a1a;
+            font-size: 12px;
+            line-height: 16px;
+            margin-top: 4px;
+        }
+
+        .input-error {
+            border-color: #ba1a1a !important;
+        }
+
+        @@keyframes float {
+            0% {
+                transform: translateY(0px);
+            }
+
+            50% {
+                transform: translateY(-10px);
+            }
+
+            100% {
+                transform: translateY(0px);
+            }
+        }
+
+        .floating-effect {
+            animation: float 6s ease-in-out infinite;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-md md:p-lg bg-surface">
+    <!-- Main Login Container -->
+    <main class="w-full max-w-[480px] bg-surface-container-lowest rounded-2xl overflow-hidden login-card flex flex-col min-h-auto">
+        <div class="w-full p-lg md:p-2xl flex flex-col justify-center">
+            <!-- Mobile Header -->
+            <div class="mb-xl text-center">
+                <h1 class="font-headline-lg-mobile text-headline-lg-mobile text-on-background">Portfolio Admin</h1>
+            </div>
+
+            <!-- Genel hata mesajı (ör. kullanıcı adı/şifre hatalı) -->
+            @if (!ViewData.ModelState.IsValid)
+            {
+                <div class="field-error text-center mb-md">
+                    @Html.ValidationSummary(true, "", new { @class = "field-error" })
+                </div>
+            }
+
+            <form asp-action="Login" asp-controller="Auth" method="post" class="space-y-lg" id="loginForm">
+                @Html.AntiForgeryToken()
+
+                <!-- Kullanıcı Adı Alanı -->
+                <div class="group">
+                    <label class="font-label-md text-label-md text-on-surface-variant mb-xs block" asp-for="UserName">Kullanıcı Adı</label>
+                    <div class="relative">
+                        <span class="material-symbols-outlined absolute left-md top-1/2 -translate-y-1/2 text-outline group-focus-within:text-primary transition-colors">person</span>
+                        <input asp-for="UserName"
+                               class="w-full glass-input border-0 border-b-2 border-outline-variant py-sm pl-[44px] pr-md font-body-md text-body-md focus:border-primary focus:ring-0 rounded-t-lg"
+                               placeholder="Kullanıcı adınızı girin" />
+                    </div>
+                    <span asp-validation-for="UserName" class="field-error"></span>
+                </div>
+
+                <!-- Şifre Alanı -->
+                <div class="group">
+                    <label class="font-label-md text-label-md text-on-surface-variant mb-xs block" asp-for="Password">Şifre</label>
+                    <div class="relative">
+                        <span class="material-symbols-outlined absolute left-md top-1/2 -translate-y-1/2 text-outline group-focus-within:text-primary transition-colors">lock</span>
+                        <input asp-for="Password"
+                               type="password"
+                               class="w-full glass-input border-0 border-b-2 border-outline-variant py-sm pl-[44px] pr-[44px] font-body-md text-body-md focus:border-primary focus:ring-0 rounded-t-lg"
+                               placeholder="••••••••" />
+                        <button class="absolute right-md top-1/2 -translate-y-1/2 text-outline hover:text-on-surface transition-colors cursor-pointer" onclick="togglePassword()" type="button">
+                            <span class="material-symbols-outlined" id="visibilityIcon">visibility</span>
+                        </button>
+                    </div>
+                    <span asp-validation-for="Password" class="field-error"></span>
+                </div>
+
+                <!-- Controls Row -->
+                @*<div class="flex items-center justify-between font-label-md text-label-md">
+                    <label class="flex items-center cursor-pointer group">
+                        <input class="w-4 h-4 rounded border-outline-variant text-primary focus:ring-primary focus:ring-offset-0 mr-xs transition-all" type="checkbox" name="rememberMe">
+                        <span class="text-on-surface-variant group-hover:text-on-surface">Beni Hatırla</span>
+                    </label>
+                    <a class="text-primary hover:text-on-primary-fixed-variant font-medium transition-colors" href="#">Şifremi Unuttum</a>
+                </div>*@
+
+                <!-- Submit Button -->
+                <button class="w-full btn-gradient text-on-primary font-headline-md text-headline-md py-sm rounded-xl shadow-md hover:shadow-lg active:scale-[0.98] transition-all flex items-center justify-center gap-xs" type="submit">
+                    Giriş Yap
+                    <span class="material-symbols-outlined">arrow_forward</span>
+                </button>
+            </form>
+
+            <!-- Footer Info -->
+            <footer class="mt-2xl flex items-center justify-center gap-sm">
+                <span class="w-1.5 h-1.5 rounded-full bg-outline-variant"></span>
+                <p class="font-label-md text-label-md text-outline">© 2026 Portfolio Admin System</p>
+                <span class="w-1.5 h-1.5 rounded-full bg-outline-variant"></span>
+            </footer>
+        </div>
+    </main>
+
+    <script>
+        function togglePassword() {
+          const passwordInput = document.getElementById('Password');
+          const icon = document.getElementById('visibilityIcon');
+
+          if (passwordInput.type === 'password') {
+            passwordInput.type = 'text';
+            icon.textContent = 'visibility_off';
+          } else {
+            passwordInput.type = 'password';
+            icon.textContent = 'visibility';
+          }
+        }
+    </script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/3.2.12/jquery.validate.unobtrusive.min.js"></script>
+</body>
+</html>

@@ -28,6 +28,11 @@ namespace Portfolio.Controllers
         public IActionResult UpdateUserMessage(int id)
         {
             var usermessage = _context.UserMessages.Find(id);
+            if (!usermessage.IsRead)
+            {
+                usermessage.IsRead = true;
+                _context.SaveChanges();
+            }
             return View(usermessage);
         }
 

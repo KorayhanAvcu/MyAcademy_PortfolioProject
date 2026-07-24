@@ -14,6 +14,13 @@
 
     <nav class="flex-1 space-y-1">
 
+        <a class="flex items-center gap-md px-md py-sm text-on-surface-variant hover:bg-surface-container-highest transition-colors duration-200 cursor-pointer active:opacity-80"
+           href="/Dashboard/Index">
+
+            <span class="material-symbols-outlined">dashboard</span>
+            <span class="font-label-md text-label-md">Dashboard</span>
+
+        </a>
 
         <a class="flex items-center gap-md px-md py-sm text-on-surface-variant hover:bg-surface-container-highest transition-colors duration-200 cursor-pointer active:opacity-80"
            href="/Banner/Index">
@@ -29,7 +36,7 @@
            href="/About/Index">
 
             <span class="material-symbols-outlined">person</span>
-            <span class="font-label-md text-label-md">Hakkımızda</span>
+            <span class="font-label-md text-label-md">Hakkımda</span>
 
         </a>
 
@@ -141,19 +148,22 @@
     <div class="mt-auto px-md flex items-center gap-md pt-lg border-t border-outline-variant">
 
         <img class="w-10 h-10 rounded-full object-cover"
-             src="https://lh3.googleusercontent.com/aida-public/AB6AXuDlqBWu1p3aEq67qLFKu3y0UlRSj2DnWM__vm_crDnbFt0J1ysDUDdO844jg0nfKyChHiwtprZpN7CA3NUWKdHRFl9P8J1GJ028acIMqkkHcyPX3vP-AB-NprsvMmxoHSenYYR-g8W4k6DVuPAXSbNCH4DrEV4_2_GzRs1fGTBkJVgBqXOhs8AL0fYxwnpir9XR3RDD69DW37S4km1I3hj57im8Qkw3l9z73SC8C7_IOQ71vqx5-6vGnu6WDoQUdm9B06QEUJwZHz3V" />
+             src="@ViewBag.imgUrl" />
 
 
         <div>
 
             <p class="font-label-md text-label-md font-bold text-on-surface">
-                Admin User
+                @ViewBag.fullName
             </p>
 
             <p class="text-[10px] text-on-surface-variant uppercase tracking-wider font-semibold">
-                Super Admin
+                Admin
             </p>
 
+        </div>
+        <div>
+            <a href="/Auth/Login"><i class="fa-solid fa-arrow-right-from-bracket"></i>Çıkış Yap</a>
         </div>
 
     </div>
