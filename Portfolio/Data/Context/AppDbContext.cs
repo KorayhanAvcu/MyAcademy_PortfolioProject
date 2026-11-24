@@ -5,10 +5,8 @@ namespace Portfolio.Data.Context
 {
     public class AppDbContext : DbContext
     {
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            optionsBuilder.UseSqlServer("server=KORAYHAN\\SQLEXPRESS;database=PortfolioDb;integrated security=true;trustServerCertificate=true");
-        }
+        public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
+
         public DbSet<About> Abouts { get; set; }
         public DbSet<Admin> Admins { get; set; }
         public DbSet<Banner> Banners { get; set; }

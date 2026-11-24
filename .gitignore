@@ -361,3 +361,7 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+# Deployment / runtime
+appsettings.Production.json
+logs/
+Portfolio/wwwroot/uploads/
