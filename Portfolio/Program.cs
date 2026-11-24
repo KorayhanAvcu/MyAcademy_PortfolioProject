@@ -1,5 +1,6 @@
 ﻿using System.Threading.RateLimiting;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
@@ -77,6 +78,16 @@ builder.Services.AddAuthorization(options =>
         .Build();
 });
 
+// Tunel (cloudflared/ngrok) arkasinda calisirken gercek ziyaretci IP'si ve sema
+// yalnizca X-Forwarded-* basliklarindan okunabilir. Proxy loopback'ten bagladigi
+// icin KnownNetworks/KnownProxies temizlenir; aksi halde basliklar yok sayilir.
+builder.Services.Configure<ForwardedHeadersOptions>(options =>
+{
+    options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+    options.KnownNetworks.Clear();
+    options.KnownProxies.Clear();
+});
+
 // Iletisim formu: IP basina 5 dakikada 3 istek. Gercek ziyaretci IP'si icin
 // UseForwardedHeaders bu limitleyiciden ONCE calismak zorunda (yoksa tum tunel
 // trafigi proxy'nin tek adresinde birikir).
@@ -109,6 +120,13 @@ builder.Services.AddControllersWithViews(options =>
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
+
+// EN BASTA: bundan sonraki her katman (LocalOnly, rate limiter, loglama) gercek
+// ziyaretci IP'sini gorur. Daha sonra eklenirse her tunel istegi loopback gorunur,
+// LocalOnly admin panelini localhost'tan bile 404'e dusurur ve IP basina limit
+// tek bir proxy adresinde birikir.
+app.UseForwardedHeaders();
+
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
@@ -119,7 +137,13 @@ if (!app.Environment.IsDevelopment())
 // 404 / 403 gibi govdesiz durum kodlari icin hata sayfasini yeniden calistir.
 app.UseStatusCodePagesWithReExecute("/Home/Error/{0}");
 
-app.UseHttpsRedirection();
+// Canlida TLS'i tunel sonlandiriyor ve uygulamaya duz HTTP geliyor; yonlendirme
+// acik kalirsa sonsuz dongu olusur. Bu yuzden yalnizca gelistirmede.
+if (app.Environment.IsDevelopment())
+{
+    app.UseHttpsRedirection();
+}
+
 app.UseStaticFiles();
 
 app.UseRouting();
