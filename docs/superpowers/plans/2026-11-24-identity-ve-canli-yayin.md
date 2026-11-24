@@ -24,6 +24,14 @@
 - Her commit mesajı şu satırla bitecek:
   `Co-Authored-By: Claude Opus 5 <noreply@anthropic.com>`
 - Test veritabanı adı `PortfolioDb_Test`; testler onu migration ile kurup sonunda düşürecek.
+- **Her yeni test sınıfı `[Collection(...)]` niteliğini taşımak zorunda** (Ruling V).
+  `IClassFixture` sınıf başına bir factory yaratıyor; iki factory aynı test
+  veritabanını oluşturmak için yarışıp "Database already exists" hatası veriyor.
+  Paylaşılan collection fixture `Portfolio.Tests/PortfolioAppFactory.cs` içinde
+  `PortfolioAppCollection` olarak tanımlı.
+- Derleme uyarısı tabanı **71** (hepsi `Portfolio.csproj`, ağırlıkla CS8618/CS8604,
+  pre-existing). Hiçbir görev bu sayıyı artırmayacak; yeni dosyalar uyarısız olacak.
+  Toplu nullable temizliği kapsam dışı (Ruling L).
 
 ## Review Focus
 
