@@ -141,11 +141,25 @@ public class PublicSiteTests : IClassFixture<PortfolioAppFactory>
 }
 ```
 
-- [ ] **Adım 5: Testi çalıştırıp başarısız olduğunu gör.**
-  Çalıştır: `dotnet test --filter Anasayfa_anonim_olarak_200_doner`
-  Beklenen: FAIL — 307 dönüyor. `DefaultController` zaten `[AllowAnonymous]` olduğu için yetki sorun değil; başarısızlığın nedeni `UseHttpsRedirection`'ın test istemcisinin `http://localhost` adresini HTTPS'e yönlendirmesi.
+- [ ] **Adım 5-6 (DÜZELTİLDİ — uygulama sırasında bu adımların yanlış olduğu ortaya çıktı).**
 
-- [ ] **Adım 6: `CreateAnonymousClient()`'ın `BaseAddress`'ini `https://localhost/` yap.** `TestServer` gerçek TLS yapmaz ama `Request.IsHttps` true olur ve `UseHttpsRedirection` isteği geçirir. Bu, üretim davranışını değiştirmeden testi doğru ortama oturtur.
+  Özgün metin bu testin önce 307 ile başarısız olacağını, sonra istemcinin
+  `BaseAddress`'i `https://localhost/` yapılarak geçeceğini söylüyordu. **Yanlıştı:**
+  `TestServer` hiç HTTPS portu yapılandırmadığı için `UseHttpsRedirection` test
+  altında yönlendirme yapmıyor; ayrıca varsayılan istemci yönlendirmeyi takip edip
+  200'de bitirirdi. Yani bu testin **doğal bir RED'i yok** — doğrulanan davranış
+  (`/` anonim olarak 200 dönüyor) görev başlamadan önce de çalışıyordu.
+
+  Karar (Ruling M): test bir **regresyon koruması** olarak kabul edilir ve bu test
+  için TDD RED şartı düşer — Task 1'in muafiyetiyle aynı mantık. Değeri ileriye
+  dönük: Task 5 yetkilendirme modelini, Task 9 `UseHttpsRedirection`'ı değiştiriyor;
+  bu test ikisinin de public tarafı kırmadığını garanti ediyor.
+
+  Yapay bir RED üretmek için HTTPS portu ayarlamak gibi bir iskele **commit'te
+  bırakılmayacak.**
+
+  Çalıştır: `dotnet test --filter Anasayfa_anonim_olarak_200_doner`
+  Beklenen: PASS, çıktı temiz.
 
 - [ ] **Adım 7: Testi çalıştırıp geçtiğini gör.**
   Çalıştır: `dotnet test --filter Anasayfa_anonim_olarak_200_doner`
@@ -204,8 +218,7 @@ public async Task Identity_tablolari_var_icerik_tablolari_korunmus_Admin_kalkmis
                               "Testimonial", "ProjectTechStack", "UserMessage" })
         Assert.Contains(n, names);
 
-    // Admin entity'si kalkmış
-    Assert.DoesNotContain("Admin", names);
+    // NOT: "Admin entity'si kalkmış" iddiası Task 4'e taşındı (bkz. Adım 4-5).
 }
 ```
 
@@ -213,9 +226,22 @@ public async Task Identity_tablolari_var_icerik_tablolari_korunmus_Admin_kalkmis
   Çalıştır: `dotnet test --filter Identity_tablolari_olusuyor`
   Beklenen: FAIL — `db.Users` derlenmiyor.
 
-- [ ] **Adım 4: `AppUser`'ı yaz ve `Admin.cs`'i sil.**
+- [ ] **Adım 4: `AppUser`'ı yaz. `Admin.cs` SİLİNMEYECEK (DÜZELTİLDİ).**
 
-- [ ] **Adım 5: `AppDbContext`'i `IdentityDbContext<AppUser, IdentityRole, string>`'ten türet.** `DbSet<Admin> Admins` satırı kaldırılacak, diğer 13 `DbSet` korunacak. `OnModelCreating`'de `base.OnModelCreating(builder)` çağrısı şart.
+  Özgün metin `Admin.cs`'in burada silinmesini söylüyordu. **Bu, build'i kırıyor:**
+  `AuthController` `_context.Admins` sorguluyor ve ancak Task 4'te yeniden yazılıyor,
+  yani Task 3 derlenmeyen bir commit bırakırdı.
+
+  Karar (Ruling U): Identity **yanına eklenir**, `Admin` entity'si ve `Admins` DbSet'i
+  yerinde kalır. `Admin`'in kaldırılması, tablosunun düşürülmesi ve `AuthController`'ın
+  yeniden yazımı **hepsi Task 4'te**, tek migration'da yapılır.
+
+  Kabul edilen ara durum: bu görevle Task 4 arasında **eski admin girişi çalışmaz**,
+  çünkü `AddIdentity` uygulama şemasını `IdentityConstants.ApplicationScheme` yapıyor
+  ama eski `AuthController` `CookieAuthenticationDefaults.AuthenticationScheme` ile
+  oturum açıyor. Derleme ve testler yeşil kalır; Task 4 girişi geri getirir.
+
+- [ ] **Adım 5: `AppDbContext`'i `IdentityDbContext<AppUser, IdentityRole, string>`'ten türet.** 14 `DbSet`'in **tamamı korunacak** (`Admins` dahil — bkz. Adım 4). `OnModelCreating`'de `base.OnModelCreating(builder)` çağrısı şart.
 
 - [ ] **Adım 6: `AppUserClaimsPrincipalFactory`'yi yaz.** `UserClaimsPrincipalFactory<AppUser, IdentityRole>`'dan türer, `GenerateClaimsAsync` override'ında `fullname` ve `imageUrl` claim'lerini ekler.
 
@@ -233,7 +259,14 @@ public async Task Identity_tablolari_var_icerik_tablolari_korunmus_Admin_kalkmis
 dotnet ef migrations add mig_identity --project Portfolio
 dotnet ef database update --project Portfolio
 ```
-  Migration dosyasını **uygulamadan önce oku**: yalnızca `AspNet*` tablolarının eklendiğini ve `Admins` dışında tablo düşürülmediğini doğrula. Başka bir tablo düşülüyorsa migration'ı sil ve düzelt.
+  Migration dosyasını **uygulamadan önce oku**: yalnızca `AspNet*` tablolarının
+  eklendiğini doğrula. Bu migration **hiçbir tablo düşürmemeli** — `Admins` dahil
+  (o, Task 4'e ait). `DropTable`, `DropColumn` ya da veri kaybına yol açan herhangi
+  bir işlem görürsen migration'ı sil, nedenini bul ve düzelt.
+
+  Canlı veritabanının yedeği alınmış durumda:
+  `C:\Program Files\Microsoft SQL Server\MSSQL16.SQLEXPRESS\MSSQL\Backup\PortfolioDb_pre_identity_20261124.bak`
+  (doğrulandı). Yine de yedeğin varlığı dikkatsizliği mazur göstermez.
 
 - [ ] **Adım 10: Testleri çalıştırıp geçtiğini gör.**
   Çalıştır: `dotnet test`
@@ -257,6 +290,10 @@ git commit -m "feat: kimlik dogrulamayi ASP.NET Core Identity'ye tasi"
 - Modify: `Portfolio/Views/Auth/Login.cshtml`
 - Create: `Portfolio/Views/Auth/ChangePassword.cshtml`
 - Modify: `Portfolio/Program.cs`
+- **Delete: `Portfolio/Data/Entities/Admin.cs`** (Task 3'ten devredildi — Ruling U)
+- **Modify: `Portfolio/Data/Context/AppDbContext.cs`** (`DbSet<Admin> Admins` kaldırılır)
+- **Create: `Portfolio/Migrations/<timestamp>_mig_admin_removed.cs`** (`Admins` tablosunu düşürür)
+- Modify: `Portfolio.Tests/PortfolioAppFactory.cs` (devredilen 3 Minor — aşağıdaki Adım 0)
 - Test: `Portfolio.Tests/AdminSeederTests.cs`, `Portfolio.Tests/LoginTests.cs`
 
 **Interfaces:**
@@ -267,6 +304,23 @@ git commit -m "feat: kimlik dogrulamayi ASP.NET Core Identity'ye tasi"
   - Kullanıcı yokken şifre yoksa `InvalidOperationException` fırlatır.
   - Sabitler: e-posta `korayhanavcu@gmail.com`, rol adı `Admin`, config anahtarı `ADMIN_SEED_PASSWORD`.
   - `LoginViewModel` artık `Email` (+ `[EmailAddress]`) ve `Password` taşır; `UserName` kaldırıldı.
+
+- [ ] **Adım 0: Task 2'den devredilen üç düzeltmeyi yap (ÖNCE bu, `Migrate()` eklemeden evvel).**
+
+  **(a) Veri güvenliği — sıralama.** `PortfolioAppFactory`'nin veritabanı adı guard'ı
+  şu an host **kurulduktan sonra** çalışıyor. Bu görev açılışa `Migrate()` + seed
+  ekliyor ve bunlar host build **sırasında**, guard'dan **önce** koşacak. Config
+  override bir gün uygulanmazsa açılış kodu **canlı veritabanını** migrate/seed eder.
+  Bu yüzden: test connection string'i builder zamanında mevcut olacak şekilde
+  verilecek (`builder.UseSetting("ConnectionStrings:DefaultConnection", ...)` ya da
+  environment variable) ve çözülen ad kontrolü `ConfigureWebHost` içine taşınacak.
+
+  **(b)** `ConfigureClient` override edilerek yönlendirme takibi varsayılan olarak
+  kapatılacak — devralınan `CreateClient()` de kapsanmalı, yoksa sonraki bir görev
+  yanlışlıkla onu kullanıp 302/400/404 yerine 200 görür.
+
+  **(c)** `base.DisposeAsync()` `try/finally` içine alınacak; guard ya da drop
+  fırlatırsa host sızmayacak.
 
 - [ ] **Adım 1: Başarısız olacak testleri yaz.**
 ```csharp
@@ -308,6 +362,26 @@ git commit -m "feat: kimlik dogrulamayi ASP.NET Core Identity'ye tasi"
   Beklenen: PASS
 
 - [ ] **Adım 10: "Şifre Değiştir" sayfasını ekle.** `ChangePasswordVM` (`CurrentPassword`, `NewPassword`, `ConfirmPassword` + `[Compare]`), `AuthController.ChangePassword` GET/POST, `UserManager.ChangePasswordAsync`. Başarıda `TempData` ile bilgi mesajı ve `/Dashboard`'a yönlendirme.
+
+- [ ] **Adım 10b: Connection string için fail-fast kontrolü ekle (Task 1'den devredildi — Ruling I).**
+  `ConnectionStrings:DefaultConnection` boş ya da eksikse uygulama **açık bir hata
+  mesajıyla başlamayı reddedecek**: `string.IsNullOrWhiteSpace` kontrolü +
+  `InvalidOperationException("ConnectionStrings:DefaultConnection yapılandırılmamış")`.
+  Şu an eksik değer ilk sorguya kadar fark edilmiyor ve SqlClient'ın anlaşılmaz bir
+  hatası olarak düşüyor. Bu görev aynı "eksik config varsa başlamayı reddet" kalıbını
+  `ADMIN_SEED_PASSWORD` için zaten kuruyor; ikisi yan yana dursun.
+
+- [ ] **Adım 10c: `Admin` entity'sini ve `Admins` tablosunu kaldır (Task 3'ten devredildi — Ruling U).**
+  `AuthController` artık `SignInManager` kullandığı için (Adım 7) `Admins`'in son
+  tüketicisi kalmadı. Sırayla: `DbSet<Admin> Admins` satırını `AppDbContext`'ten
+  kaldır, `Portfolio/Data/Entities/Admin.cs`'i sil, migration üret
+  (`dotnet ef migrations add mig_admin_removed --project Portfolio`), **migration
+  dosyasını uygulamadan önce oku** — yalnızca `Admins` tablosunun düşürüldüğünü
+  doğrula, başka `DropTable`/`DropColumn` varsa dur ve bildir — sonra uygula.
+  Task 3'ten taşınan iddiayı `IdentitySchemaTests`'e ekle:
+```csharp
+Assert.DoesNotContain("Admin", db.Model.GetEntityTypes().Select(t => t.ClrType.Name));
+```
 
 - [ ] **Adım 11: Tüm testleri çalıştır.**
   Çalıştır: `dotnet test`
