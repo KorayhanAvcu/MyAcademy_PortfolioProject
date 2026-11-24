@@ -100,7 +100,7 @@
             cancelButtonText: "İptal"
         }).then((result) => {
             if (result.isConfirmed) {
-                window.location.href = "/Experience/DeleteExperience/" + id;
+                portfolioPostDelete("/Experience/DeleteExperience/" + id);
             }
         });
     }

@@ -154,7 +154,7 @@
             cancelButtonText: "İptal"
         }).then((result) => {
             if (result.isConfirmed) {
-                window.location.href = "/Project/DeleteProject/" + id;
+                portfolioPostDelete("/Project/DeleteProject/" + id);
             }
         });
     }

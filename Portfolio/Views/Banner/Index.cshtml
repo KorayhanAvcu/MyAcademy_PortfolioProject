@@ -143,7 +143,7 @@
             cancelButtonText: "İptal"
         }).then((result) => {
             if (result.isConfirmed) {
-                window.location.href = "/Banner/DeleteBanner/" + id;
+                portfolioPostDelete("/Banner/DeleteBanner/" + id);
             }
         });
     }

@@ -108,7 +108,7 @@
             cancelButtonText: "İptal"
         }).then((result) => {
             if (result.isConfirmed) {
-                window.location.href = "/Testimonial/DeleteTestimonial/" + id;
+                portfolioPostDelete("/Testimonial/DeleteTestimonial/" + id);
             }
         });
     }

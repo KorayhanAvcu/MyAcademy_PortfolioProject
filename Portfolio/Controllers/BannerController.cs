@@ -54,9 +54,15 @@ namespace Portfolio.Controllers
             return RedirectToAction("Index");
         }
 
+        [HttpPost]
         public IActionResult DeleteBanner(int id)
         {
             var banner = _context.Banners.Find(id);
+            if (banner == null)
+            {
+                return NotFound();
+            }
+
             _context.Banners.Remove(banner);
             _context.SaveChanges();
             return RedirectToAction("Index");

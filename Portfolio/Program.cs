@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Portfolio.Data.Context;
 using Portfolio.Data.Entities;
@@ -52,7 +53,14 @@ builder.Services.AddAuthorization(options =>
         .Build();
 });
 
-builder.Services.AddControllersWithViews();
+// View'lardaki silme islemleri token'i gizli alandan okuyup header'da gonderiyor.
+builder.Services.AddAntiforgery(options => options.HeaderName = "RequestVerificationToken");
+
+builder.Services.AddControllersWithViews(options =>
+{
+    // Tum POST/PUT/PATCH/DELETE istekleri icin CSRF dogrulamasi.
+    options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute());
+});
 
 var app = builder.Build();
 

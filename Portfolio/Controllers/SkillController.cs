@@ -115,6 +115,7 @@ namespace Portfolio.Controllers
 
 
         // DELETE
+        [HttpPost]
         public IActionResult DeleteSkill(int id)
         {
             var skill = _context.Skills

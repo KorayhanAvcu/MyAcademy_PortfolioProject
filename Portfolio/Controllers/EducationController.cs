@@ -53,9 +53,15 @@ namespace Portfolio.Controllers
             _context.SaveChanges();
             return RedirectToAction("Index");
         }
+        [HttpPost]
         public IActionResult DeleteEducation(int id)
         {
             var education = _context.Educations.Find(id);
+            if (education == null)
+            {
+                return NotFound();
+            }
+
             _context.Educations.Remove(education);
             _context.SaveChanges();
             return RedirectToAction("Index");

@@ -47,7 +47,7 @@
                                     <a class="p-1.5 text-on-surface-variant hover:text-primary hover:bg-surface-container rounded-md transition-all" href="/About/UpdateAbout/@Model.Id">
                                         <span class="material-symbols-outlined text-[20px]">edit</span>
                                     </a>
-                                    <a onclick="return confirm('Silmek istediğinize emin misiniz?')" class="p-1.5 text-on-surface-variant hover:text-error hover:bg-error-container/20 rounded-md transition-all" href="/About/DeleteAbout/@Model.Id">
+                                    <a onclick="if (confirm('Silmek istediğinize emin misiniz?')) { portfolioPostDelete('/About/DeleteAbout/@Model.Id'); } return false;" class="p-1.5 text-on-surface-variant hover:text-error hover:bg-error-container/20 rounded-md transition-all cursor-pointer" href="#">
                                         <span class="material-symbols-outlined text-[20px]">delete</span>
                                     </a>
                                 </div>

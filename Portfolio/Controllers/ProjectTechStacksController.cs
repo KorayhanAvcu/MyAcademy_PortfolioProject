@@ -117,6 +117,7 @@ namespace Portfolio.Controllers
 
             return RedirectToAction("Index");
         }
+        [HttpPost]
         public IActionResult Delete(int id)
         {
             var values = _context.ProjectTechStacks

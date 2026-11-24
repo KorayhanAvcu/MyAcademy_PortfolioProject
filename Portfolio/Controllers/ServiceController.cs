@@ -52,9 +52,15 @@ namespace Portfolio.Controllers
             return RedirectToAction("Index");
         }
 
+        [HttpPost]
         public IActionResult DeleteService(int id)
         {
             var service = _context.Services.Find(id);
+            if (service == null)
+            {
+                return NotFound();
+            }
+
             _context.Services.Remove(service);
             _context.SaveChanges();
             return RedirectToAction("Index");

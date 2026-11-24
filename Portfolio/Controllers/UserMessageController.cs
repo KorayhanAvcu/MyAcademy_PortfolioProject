@@ -44,9 +44,15 @@ namespace Portfolio.Controllers
             return RedirectToAction("Index");
         }
 
+        [HttpPost]
         public IActionResult DeleteUserMessage(int id)
         {
             var message = _context.UserMessages.Find(id);
+            if (message == null)
+            {
+                return NotFound();
+            }
+
             _context.UserMessages.Remove(message);
             _context.SaveChanges();
             return RedirectToAction("Index");

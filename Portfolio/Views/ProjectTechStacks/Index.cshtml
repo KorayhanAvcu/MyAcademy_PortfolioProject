@@ -93,7 +93,7 @@
             cancelButtonText: "İptal"
         }).then((result) => {
             if (result.isConfirmed) {
-                window.location.href = "/ProjectTechStacks/Delete/" + id;
+                portfolioPostDelete("/ProjectTechStacks/Delete/" + id);
             }
         });
     }

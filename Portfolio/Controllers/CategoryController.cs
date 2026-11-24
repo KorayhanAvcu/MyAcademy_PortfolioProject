@@ -49,9 +49,15 @@ namespace Portfolio.Controllers
             return RedirectToAction("Index");
         }
 
+        [HttpPost]
         public IActionResult DeleteCategory(int id)
         {
             var category = _context.Categories.Find(id);
+            if (category == null)
+            {
+                return NotFound();
+            }
+
             _context.Categories.Remove(category);
             _context.SaveChanges();
             return RedirectToAction("Index");

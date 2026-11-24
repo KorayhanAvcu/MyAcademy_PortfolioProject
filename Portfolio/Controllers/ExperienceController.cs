@@ -55,9 +55,15 @@ namespace Portfolio.Controllers
             return RedirectToAction("Index");
         }
 
+        [HttpPost]
         public IActionResult DeleteExperience(int id)
         {
             var experience = _context.Experiences.Find(id);
+            if (experience == null)
+            {
+                return NotFound();
+            }
+
             _context.Experiences.Remove(experience);
             _context.SaveChanges();
             return RedirectToAction("Index");

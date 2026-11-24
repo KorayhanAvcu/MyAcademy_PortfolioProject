@@ -97,7 +97,7 @@
             cancelButtonText: "İptal"
         }).then((result) => {
             if (result.isConfirmed) {
-                window.location.href = "/ContactInfo/DeleteContactInfo/" + id;
+                portfolioPostDelete("/ContactInfo/DeleteContactInfo/" + id);
             }
         });
     }

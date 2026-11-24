@@ -7,6 +7,9 @@
 <html class="light" lang="tr">
 @await Component.InvokeAsync("_AdminLayoutHead")
 <body class="font-body-md text-body-md">
+    @* Silme islemleri POST ile yapiliyor; token buradan okunur. *@
+    @Html.AntiForgeryToken()
+
     @await Component.InvokeAsync("_AdminLayoutSidebar")
     @await Component.InvokeAsync("_AdminLayoutTopnavbar")
     <!-- Main Content Area -->
@@ -43,6 +46,33 @@
         });
     </script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        // Silme islemleri artik POST: adres satirindan ya da baska bir siteden
+        // tetiklenemez. Token gizli alandan okunup header'da gonderilir
+        // (Program.cs: AddAntiforgery -> HeaderName "RequestVerificationToken").
+        function portfolioPostDelete(url) {
+            var tokenField = document.querySelector('input[name="__RequestVerificationToken"]');
+
+            return fetch(url, {
+                method: 'POST',
+                headers: { 'RequestVerificationToken': tokenField ? tokenField.value : '' },
+                credentials: 'same-origin'
+            }).then(function (response) {
+                if (response.ok) {
+                    location.reload();
+                    return;
+                }
+
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Silme islemi basarisiz oldu.',
+                    text: 'Durum kodu: ' + response.status
+                });
+            }).catch(function () {
+                Swal.fire({ icon: 'error', title: 'Sunucuya ulasilamadi.' });
+            });
+        }
+    </script>
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     @RenderSection("Scripts", required: false)

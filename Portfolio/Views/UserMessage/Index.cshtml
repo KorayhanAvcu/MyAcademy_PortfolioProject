@@ -111,7 +111,7 @@
             cancelButtonText: "İptal"
         }).then((result) => {
             if (result.isConfirmed) {
-                window.location.href = "/UserMessage/DeleteUserMessage/" + id;
+                portfolioPostDelete("/UserMessage/DeleteUserMessage/" + id);
             }
         });
     }

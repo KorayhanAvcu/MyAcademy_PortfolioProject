@@ -89,7 +89,7 @@
             cancelButtonText: "İptal"
         }).then((result) => {
             if (result.isConfirmed) {
-                window.location.href = "/Service/DeleteService/" + id;
+                portfolioPostDelete("/Service/DeleteService/" + id);
             }
         });
     }

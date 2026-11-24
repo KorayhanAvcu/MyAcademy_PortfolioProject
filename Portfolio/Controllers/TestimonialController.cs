@@ -54,9 +54,15 @@ namespace Portfolio.Controllers
             return RedirectToAction("Index");
         }
 
+        [HttpPost]
         public IActionResult DeleteTestimonial(int id)
         {
             var testimonial = _context.Testimonials.Find(id);
+            if (testimonial == null)
+            {
+                return NotFound();
+            }
+
             _context.Testimonials.Remove(testimonial);
             _context.SaveChanges();
             return RedirectToAction("Index");

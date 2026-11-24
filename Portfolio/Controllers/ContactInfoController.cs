@@ -53,9 +53,15 @@ namespace Portfolio.Controllers
             return RedirectToAction("Index");
         }
 
+        [HttpPost]
         public IActionResult DeleteContactInfo(int id)
         {
             var contactInfo = _context.ContactInfos.Find(id);
+            if (contactInfo == null)
+            {
+                return NotFound();
+            }
+
             _context.ContactInfos.Remove(contactInfo);
             _context.SaveChanges();
             return RedirectToAction("Index");

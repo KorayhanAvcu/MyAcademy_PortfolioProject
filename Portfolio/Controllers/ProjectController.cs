@@ -54,9 +54,15 @@ namespace Portfolio.Controllers
             return RedirectToAction("Index");
         }
 
+        [HttpPost]
         public IActionResult DeleteProject(int id)
         {
             var project = _context.Projects.Find(id);
+            if (project == null)
+            {
+                return NotFound();
+            }
+
             _context.Projects.Remove(project);
             _context.SaveChanges();
             return RedirectToAction("Index");
