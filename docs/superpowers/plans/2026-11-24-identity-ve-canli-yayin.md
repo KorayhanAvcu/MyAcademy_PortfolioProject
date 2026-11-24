@@ -330,6 +330,22 @@ git commit -m "feat: kimlik dogrulamayi ASP.NET Core Identity'ye tasi"
   **(c)** `base.DisposeAsync()` `try/finally` içine alınacak; guard ya da drop
   fırlatırsa host sızmayacak.
 
+  **(d) `[Collection(...)]` kuralını zorla (Ruling BB).** Şu an bu yalnızca bir
+  yazılı kural; alışkanlıkla `IClassFixture<PortfolioAppFactory>` yazan bir test
+  sınıfı, Task 3'e bir hata ayıklama turu kaybettiren yarışı sessizce geri getirir
+  ve hata mesajı ("Database 'PortfolioDb_Test' already exists") nedeni hiç
+  söylemez. `PortfolioAppFactory`'nin constructor'ına ikinci bir örnek
+  oluşturulduğunda **nedenini açıkça söyleyen** bir sayaç guard'ı eklenecek.
+
+- [ ] **Adım 0b: Claim'i koşulsuz ekle (Ruling CC).**
+  `AppUserClaimsPrincipalFactory` şu an `fullname` claim'ini
+  `string.IsNullOrEmpty` kontrolünün arkasına koyuyor. Sonucu: `FullName` boş olan
+  bir kullanıcı **hiç** claim almıyor ve sidebar boş render ediliyor — yani Task 3'ün
+  düzeltmek için var olduğu belirtinin aynısı, bu kez seed'in `FullName`'i atlamasıyla
+  erişilebilir hale geliyor. `fullname` koşulsuz eklenecek (`Claim` yapıcısı yalnızca
+  `null` reddediyor, `""` kabul ediyor). `ImageUrl`'deki guard **kalacak**, çünkü o
+  gerçekten nullable.
+
 - [ ] **Adım 1: Başarısız olacak testleri yaz.**
 ```csharp
 [Fact] public async Task Kullanici_yokken_seeder_admini_olusturur_ve_role_ekler() { /* RunAsync() -> SeedOutcome.Created; UserManager.FindByEmailAsync(...) null degil; IsInRoleAsync(user,"Admin") true */ }
@@ -371,6 +387,12 @@ git commit -m "feat: kimlik dogrulamayi ASP.NET Core Identity'ye tasi"
 
 - [ ] **Adım 10: "Şifre Değiştir" sayfasını ekle.** `ChangePasswordVM` (`CurrentPassword`, `NewPassword`, `ConfirmPassword` + `[Compare]`), `AuthController.ChangePassword` GET/POST, `UserManager.ChangePasswordAsync`. Başarıda `TempData` ile bilgi mesajı ve `/Dashboard`'a yönlendirme.
 
+  **Başarılı değişiklikten sonra `SignInManager.RefreshSignInAsync(user)` çağrılacak
+  (Ruling DD).** Claim'ler oturum açılışında çereze kopyalanıyor; yenilenmezse
+  kullanıcı eski principal'ıyla devam eder (güvenlik damgası doğrulayıcısı varsayılan
+  30 dakikalık aralıkla yakalayana kadar) ve şifre değişikliği sonrası çerez eski
+  damgayı taşıdığı için beklenmedik şekilde oturumdan düşebilir.
+
 - [ ] **Adım 10b: Connection string için fail-fast kontrolü ekle (Task 1'den devredildi — Ruling I).**
   `ConnectionStrings:DefaultConnection` boş ya da eksikse uygulama **açık bir hata
   mesajıyla başlamayı reddedecek**: `string.IsNullOrWhiteSpace` kontrolü +
@@ -389,6 +411,19 @@ git commit -m "feat: kimlik dogrulamayi ASP.NET Core Identity'ye tasi"
   Task 3'ten taşınan iddiayı `IdentitySchemaTests`'e ekle:
 ```csharp
 Assert.DoesNotContain("Admin", db.Model.GetEntityTypes().Select(t => t.ClrType.Name));
+```
+
+  **Ayrıca aynı teste gerçek bir veritabanı yoklaması ekle (Ruling AA).** Mevcut
+  "içerik tabloları korunuyor" yarısı `db.Model.GetEntityTypes()`'a bakıyor — bu bir
+  CLR/metadata kontrolü, tek bir içerik tablosunu bile sorgulamıyor. Sonuç: entity
+  yerinde bırakılıp elle yazılmış bir `migrationBuilder.DropTable("Abouts")` tabloyu
+  düşürür ve test **yine geçer**. Bu görev kasıtlı olarak `DropTable` içeren bir
+  migration yazdığı için risk burada artıyor, azalmıyor. Üç içerik tablosuna gerçek
+  sorgu atılacak (tablo yoksa `SqlException` fırlar):
+```csharp
+await db.Abouts.CountAsync();
+await db.Projects.CountAsync();
+await db.UserMessages.CountAsync();
 ```
 
 - [ ] **Adım 11: Tüm testleri çalıştır.**
