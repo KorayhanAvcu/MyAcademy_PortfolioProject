@@ -29,11 +29,11 @@
 
 Spec'in ima ettiği ama hiçbir görevin testinin kendiliğinden kapsamadığı, kullanıcıyı en çok ısıracak beş durum. Her biri için test, kodu barındıran göreve eklendi:
 
-1. **İçerik tabloları boşken public anasayfa.** View component'ler ilk kaydı varsayıyorsa `/` 500 dönüyor. Referanslar silineceği için bu senaryo kesin oluşacak. → Görev 11, Adım 1.
-2. **2 MB üstü dosya yüklemesi.** Kullanıcı form üzerinde anlaşılır bir hata görmeli, Kestrel'in ham 413 sayfasını değil. → Görev 7, Adım 7.
-3. **Büyük harfli uzantı (`.JPG`, `.PNG`).** Geçerli dosya reddedilmemeli. → Görev 7, Adım 5.
-4. **Düzenleme formunda dosya seçilmemesi.** Mevcut görsel (yüklenmiş ya da harici URL) silinmemeli, korunmalı. → Görev 7, Adım 9.
-5. **Oturum süresi dolmuşken form gönderimi.** Antiforgery hatası ziyaretçiye 400 olarak düşmemeli, giriş sayfasına yönlenmeli. → Görev 6, Adım 7.
+1. **İçerik tabloları boşken public anasayfa.** View component'ler ilk kaydı varsayıyorsa `/` 500 dönüyor. Referanslar silineceği için bu senaryo kesin oluşacak. → Task 11, Adım 1.
+2. **2 MB üstü dosya yüklemesi.** Kullanıcı form üzerinde anlaşılır bir hata görmeli, Kestrel'in ham 413 sayfasını değil. → Task 7, Adım 7.
+3. **Büyük harfli uzantı (`.JPG`, `.PNG`).** Geçerli dosya reddedilmemeli. → Task 7, Adım 5.
+4. **Düzenleme formunda dosya seçilmemesi.** Mevcut görsel (yüklenmiş ya da harici URL) silinmemeli, korunmalı. → Task 7, Adım 9.
+5. **Oturum süresi dolmuşken form gönderimi.** Antiforgery hatası ziyaretçiye 400 olarak düşmemeli, giriş sayfasına yönlenmeli. → Task 6, Adım 7.
 
 ---
 
@@ -63,7 +63,7 @@ Spec'in ima ettiği ama hiçbir görevin testinin kendiliğinden kapsamadığı,
 
 ---
 
-## Görev 1: Config'i koddan çıkar
+## Task 1: Config'i koddan çıkar
 
 **Files:**
 - Modify: `Portfolio/Data/Context/AppDbContext.cs` (`OnConfiguring` silinir)
@@ -99,7 +99,7 @@ git commit -m "refactor: connection string'i koddan config'e taşı"
 
 ---
 
-## Görev 2: Test projesi ve ilk duman testi
+## Task 2: Test projesi ve ilk duman testi
 
 **Files:**
 - Create: `Portfolio.Tests/Portfolio.Tests.csproj`
@@ -109,7 +109,7 @@ git commit -m "refactor: connection string'i koddan config'e taşı"
 - Modify: `MyAcademy_PortfolioProject.sln`
 
 **Interfaces:**
-- Consumes: Görev 1'in config anahtarları.
+- Consumes: Task 1'in config anahtarları.
 - Produces: `PortfolioAppFactory : WebApplicationFactory<Program>, IAsyncLifetime` — test veritabanını migration ile kurar, `DisposeAsync`'te düşürür. `public HttpClient CreateAnonymousClient()` ve `public IServiceProvider Services` üzerinden servis erişimi. Sonraki tüm entegrasyon testleri bunu kullanır.
 
 - [ ] **Adım 1: Test projesini oluştur ve solution'a ekle.**
@@ -159,7 +159,7 @@ git commit -m "test: xUnit test projesi ve anasayfa duman testi"
 
 ---
 
-## Görev 3: Identity'ye geçiş
+## Task 3: Identity'ye geçiş
 
 **Files:**
 - Create: `Portfolio/Data/Entities/AppUser.cs`
@@ -173,7 +173,7 @@ git commit -m "test: xUnit test projesi ve anasayfa duman testi"
 - Test: `Portfolio.Tests/IdentitySchemaTests.cs`
 
 **Interfaces:**
-- Consumes: Görev 2'nin `PortfolioAppFactory`'si.
+- Consumes: Task 2'nin `PortfolioAppFactory`'si.
 - Produces:
   - `Portfolio.Data.Entities.AppUser : IdentityUser` — `public string FullName { get; set; }`, `public string? ImageUrl { get; set; }`
   - `Portfolio.Data.Context.AppDbContext : IdentityDbContext<AppUser, IdentityRole, string>`
@@ -193,7 +193,7 @@ public async Task Identity_tablolari_var_icerik_tablolari_korunmus_Admin_kalkmis
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 
     // Identity tablosu gerçekten sorgulanabiliyor (tablo yoksa SqlException atar).
-    // Sayıya DEĞİL şemaya bakılıyor: Görev 4 açılışta seed eklediğinde
+    // Sayıya DEĞİL şemaya bakılıyor: Task 4 açılışta seed eklediğinde
     // bu test kırılmasın.
     Assert.False(await db.Users.Where(u => u.Email == "yok@example.com").AnyAsync());
 
@@ -237,7 +237,7 @@ dotnet ef database update --project Portfolio
 
 - [ ] **Adım 10: Testleri çalıştırıp geçtiğini gör.**
   Çalıştır: `dotnet test`
-  Beklenen: PASS (Görev 2'nin testi dahil)
+  Beklenen: PASS (Task 2'nin testi dahil)
 
 - [ ] **Adım 11: Commit.**
 ```bash
@@ -247,7 +247,7 @@ git commit -m "feat: kimlik dogrulamayi ASP.NET Core Identity'ye tasi"
 
 ---
 
-## Görev 4: Tek admin'in seed edilmesi ve giriş
+## Task 4: Tek admin'in seed edilmesi ve giriş
 
 **Files:**
 - Create: `Portfolio/Infrastructure/AdminSeeder.cs`
@@ -260,7 +260,7 @@ git commit -m "feat: kimlik dogrulamayi ASP.NET Core Identity'ye tasi"
 - Test: `Portfolio.Tests/AdminSeederTests.cs`, `Portfolio.Tests/LoginTests.cs`
 
 **Interfaces:**
-- Consumes: `AppUser`, `AppDbContext` (Görev 3).
+- Consumes: `AppUser`, `AppDbContext` (Task 3).
 - Produces:
   - `Portfolio.Infrastructure.AdminSeeder` — `public AdminSeeder(UserManager<AppUser> users, RoleManager<IdentityRole> roles, IConfiguration config)`, `public Task<SeedOutcome> RunAsync(CancellationToken ct = default)`
   - `public enum SeedOutcome { Created, SkippedUserExists }`
@@ -321,7 +321,7 @@ git commit -m "feat: tek admin seed'i, Identity girisi ve sifre degistirme"
 
 ---
 
-## Görev 5: Yetkilendirme, localhost kısıtı ve hata sayfaları
+## Task 5: Yetkilendirme, localhost kısıtı ve hata sayfaları
 
 **Files:**
 - Create: `Portfolio/Infrastructure/LocalOnlyAttribute.cs`
@@ -334,11 +334,11 @@ git commit -m "feat: tek admin seed'i, Identity girisi ve sifre degistirme"
 - Test: `Portfolio.Tests/AuthorizationTests.cs`
 
 **Interfaces:**
-- Consumes: Identity rolleri (Görev 3), `Admin` rolü (Görev 4).
+- Consumes: Identity rolleri (Task 3), `Admin` rolü (Task 4).
 - Produces:
   - `Portfolio.Infrastructure.LocalOnlyAttribute : Attribute, IAuthorizationFilter` — `OnAuthorization` içinde `context.HttpContext.Connection.RemoteIpAddress` loopback değilse `context.Result = new NotFoundResult()`.
   - `Portfolio.Controllers.AdminControllerBase : Controller` — `[Authorize(Roles = "Admin")]` ve `[LocalOnly]` taşır.
-  - `PortfolioAppFactory.CreateRemoteClient()` — `ConfigureTestServices` ile eklenen bir middleware `HttpContext.Connection.RemoteIpAddress`'i `203.0.113.5` yapar. **Header değil, doğrudan bağlantı adresi** — böylece bu test Görev 9'un forwarded-headers ayarına bağımlı olmaz.
+  - `PortfolioAppFactory.CreateRemoteClient()` — `ConfigureTestServices` ile eklenen bir middleware `HttpContext.Connection.RemoteIpAddress`'i `203.0.113.5` yapar. **Header değil, doğrudan bağlantı adresi** — böylece bu test Task 9'un forwarded-headers ayarına bağımlı olmaz.
 
 - [ ] **Adım 1: Başarısız olacak testleri yaz.**
 ```csharp
@@ -376,7 +376,7 @@ git commit -m "feat: rol tabanli yetki, localhost kisiti ve hata sayfalari"
 
 ---
 
-## Görev 6: CSRF koruması ve 12 GET silme action'ı
+## Task 6: CSRF koruması ve 12 GET silme action'ı
 
 **Files:**
 - Modify: `Portfolio/Program.cs`
@@ -385,7 +385,7 @@ git commit -m "feat: rol tabanli yetki, localhost kisiti ve hata sayfalari"
 - Test: `Portfolio.Tests/CsrfTests.cs`
 
 **Interfaces:**
-- Consumes: `AdminControllerBase` (Görev 5).
+- Consumes: `AdminControllerBase` (Task 5).
 - Produces: Tüm silme action'ları `[HttpPost]`; view'lardaki `window.location.href = "/X/DeleteX/" + id` çağrıları yerine antiforgery token'lı `fetch` POST.
 
 - [ ] **Adım 1: Başarısız olacak testleri yaz.**
@@ -425,7 +425,7 @@ git commit -m "feat: global CSRF korumasi ve silme action'larini POST'a cevir"
 
 ---
 
-## Görev 7: Görsel yükleme
+## Task 7: Görsel yükleme
 
 **Files:**
 - Create: `Portfolio/Services/IImageStorage.cs`, `Portfolio/Services/LocalImageStorage.cs`
@@ -435,7 +435,7 @@ git commit -m "feat: global CSRF korumasi ve silme action'larini POST'a cevir"
 - Test: `Portfolio.Tests/ImageUploadTests.cs`
 
 **Interfaces:**
-- Consumes: `AdminControllerBase` (Görev 5), antiforgery (Görev 6).
+- Consumes: `AdminControllerBase` (Task 5), antiforgery (Task 6).
 - Produces:
   - `public interface IImageStorage { Task<ImageSaveResult> SaveAsync(IFormFile file, string folder, CancellationToken ct = default); void Delete(string? relativeUrl); }`
   - `public sealed record ImageSaveResult(bool Success, string? RelativeUrl, string? ErrorMessage);`
@@ -495,7 +495,7 @@ git commit -m "feat: admin panelinden gorsel yukleme"
 
 ---
 
-## Görev 8: İletişim formu, loglama ve temizlik
+## Task 8: İletişim formu, loglama ve temizlik
 
 **Files:**
 - Create: `Portfolio/Models/ContactFormVM.cs`
@@ -507,7 +507,7 @@ git commit -m "feat: admin panelinden gorsel yukleme"
 - Test: `Portfolio.Tests/ContactFormTests.cs`
 
 **Interfaces:**
-- Consumes: Görev 6'nın antiforgery ayarı.
+- Consumes: Task 6'nın antiforgery ayarı.
 - Produces: `ContactFormVM` — `Name`, `Email`, `MessageBody` (`UserMessage` ile aynı doğrulama nitelikleri) + `public string? Website { get; set; }` (honeypot, formda `aria-hidden` ve ekran dışı). Rate limiter politika adı `"contact"`.
 
 - [ ] **Adım 1: Başarısız olacak testleri yaz.**
@@ -556,7 +556,7 @@ git commit -m "feat: iletisim formu korumasi, loglama ve public klasor temizligi
 
 ---
 
-## Görev 9: Tünel arkasında çalışma ayarları
+## Task 9: Tünel arkasında çalışma ayarları
 
 **Files:**
 - Modify: `Portfolio/Program.cs`
@@ -564,7 +564,7 @@ git commit -m "feat: iletisim formu korumasi, loglama ve public klasor temizligi
 - Test: `Portfolio.Tests/ForwardedHeadersTests.cs`
 
 **Interfaces:**
-- Consumes: `LocalOnlyAttribute` (Görev 5), rate limiter (Görev 8).
+- Consumes: `LocalOnlyAttribute` (Task 5), rate limiter (Task 8).
 - Produces: `UseForwardedHeaders` yapılandırması; `LocalOnly` ve rate limiter artık gerçek ziyaretçi IP'sini görür.
 
 - [ ] **Adım 1: Başarısız olacak testi yaz.** Tünel arkasında gerçek ziyaretçi IP'si yalnızca `X-Forwarded-For`'dan okunabilir; bu okunmazsa her istek loopback görünür ve `LocalOnly` ile rate limiter işlevsiz kalır. Test tam bunu ölçüyor:
@@ -601,13 +601,13 @@ git commit -m "feat: tunel arkasinda calisma icin forwarded headers ayarlari"
 
 ---
 
-## Görev 10: CI/CD hattı
+## Task 10: CI/CD hattı
 
 **Files:**
 - Create: `.github/workflows/ci.yml`
 
 **Interfaces:**
-- Consumes: Görev 2'nin test projesi.
+- Consumes: Task 2'nin test projesi.
 - Produces: `master`'a push'ta build + test + publish + servis yeniden başlatma.
 
 - [ ] **Adım 1: Workflow'u yaz.** `on: push: branches: [master]` — **`pull_request` tetikleyicisi eklenmeyecek** (self-hosted runner'da yabancı PR'ı kod çalıştırabilir). `runs-on: self-hosted`. Adımlar: checkout, `dotnet restore`, `dotnet build --no-restore -c Release`, `dotnet test --no-build -c Release`, `dotnet publish -c Release -o <yayın klasörü>`, servisi yeniden başlat.
@@ -628,7 +628,7 @@ git commit -m "ci: build, test ve self-hosted runner ile deploy hatti"
 
 ---
 
-## Görev 11: Public tarafın boş veriye dayanıklılığı ve meta bilgileri
+## Task 11: Public tarafın boş veriye dayanıklılığı ve meta bilgileri
 
 **Files:**
 - Modify: `Portfolio/ViewComponents/Default-*/*.cs` ve ilgili `Views/Shared/Components/*/Default.cshtml`
@@ -636,7 +636,7 @@ git commit -m "ci: build, test ve self-hosted runner ile deploy hatti"
 - Test: `Portfolio.Tests/EmptyContentTests.cs`
 
 **Interfaces:**
-- Consumes: `Site:BaseUrl` (Görev 1).
+- Consumes: `Site:BaseUrl` (Task 1).
 - Produces: Her public bölüm, verisi yoksa kendini render etmez.
 
 - [ ] **Adım 1: Review Focus #1 — başarısız olacak testi yaz.** Bu test **kendi factory örneğini** kullanacak (`PortfolioAppFactory`'ye farklı bir veritabanı adı verilerek), paylaşılan test veritabanını boşaltmayacak — aksi halde diğer testler çalışma sırasına bağımlı hale gelir ve CI'da rastgele kırılır.
@@ -662,7 +662,7 @@ git commit -m "ci: build, test ve self-hosted runner ile deploy hatti"
   Çalıştır: `dotnet test --filter EmptyContentTests`
   Beklenen: PASS
 
-- [ ] **Adım 5: `_DefaultHead`'deki meta bilgilerini config'den üret.** `<title>`, `<meta name="description">`, Open Graph (`og:title`, `og:description`, `og:image`, `og:url`) ve canonical. Mutlak URL'ler `Site:BaseUrl` üzerinden kurulacak. **Gerçek metinler Görev 13'ün içerik kapısında kullanıcıdan gelecek**; bu adımda yalnızca config'den okuma altyapısı kurulur ve `"Alex Dev | Portfolio"` sabiti koddan çıkarılır.
+- [ ] **Adım 5: `_DefaultHead`'deki meta bilgilerini config'den üret.** `<title>`, `<meta name="description">`, Open Graph (`og:title`, `og:description`, `og:image`, `og:url`) ve canonical. Mutlak URL'ler `Site:BaseUrl` üzerinden kurulacak. **Gerçek metinler Task 13'ün içerik kapısında kullanıcıdan gelecek**; bu adımda yalnızca config'den okuma altyapısı kurulur ve `"Alex Dev | Portfolio"` sabiti koddan çıkarılır.
 
 - [ ] **Adım 6: Tüm testleri çalıştır.**
   Çalıştır: `dotnet test`
@@ -676,7 +676,7 @@ git commit -m "fix: public bolumleri bos veriye dayanikli hale getir, meta bilgi
 
 ---
 
-## Görev 12: Tailwind'i build'e geçir
+## Task 12: Tailwind'i build'e geçir
 
 **Files:**
 - Create: `Portfolio/tailwind/public.config.js`, `admin.config.js`, `login.config.js`
@@ -716,7 +716,7 @@ git commit -m "refactor: Tailwind'i CDN'den build cikisina gecir"
 
 ---
 
-## Görev 13: Yedekleme, içerik kapısı ve yayın
+## Task 13: Yedekleme, içerik kapısı ve yayın
 
 **Files:**
 - Create: `scripts/backup-db.ps1`
