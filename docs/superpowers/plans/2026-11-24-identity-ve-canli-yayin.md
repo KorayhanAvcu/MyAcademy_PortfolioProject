@@ -75,7 +75,7 @@ Spec'in ima ettiği ama hiçbir görevin testinin kendiliğinden kapsamadığı,
 - Consumes: —
 - Produces: `ConnectionStrings:DefaultConnection` ve `Site:BaseUrl` config anahtarları; sonraki görevlerin tamamı bunlara dayanır.
 
-- [ ] **Adım 1: `OnConfiguring` metodunu `AppDbContext`'ten sil.** Sınıf yalnızca `DbSet`'leri ve `public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)` constructor'ını taşıyacak.
+- [ ] **Adım 1: `OnConfiguring` metodunu `AppDbContext`'ten sil ve options constructor'ını ekle.** Sınıfta şu an **hiç constructor yok** (parametresiz varsayılanı kullanıyor); `public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }` eklenecek. Sınıf bundan sonra yalnızca bu constructor'ı ve `DbSet`'leri taşıyacak.
 
 - [ ] **Adım 2: `Program.cs`'te bağlantıyı config'den ver.**
   `builder.Services.AddDbContext<AppDbContext>(o => o.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")))`
@@ -192,8 +192,10 @@ public async Task Identity_tablolari_var_icerik_tablolari_korunmus_Admin_kalkmis
     using var scope = _factory.Services.CreateScope();
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 
-    // Identity tablosu gerçekten sorgulanabiliyor (yoksa SqlException atar)
-    Assert.Equal(0, await db.Users.CountAsync());
+    // Identity tablosu gerçekten sorgulanabiliyor (tablo yoksa SqlException atar).
+    // Sayıya DEĞİL şemaya bakılıyor: Görev 4 açılışta seed eklediğinde
+    // bu test kırılmasın.
+    Assert.False(await db.Users.Where(u => u.Email == "yok@example.com").AnyAsync());
 
     // 13 içerik DbSet'i hâlâ modelde
     var names = db.Model.GetEntityTypes().Select(t => t.ClrType.Name).ToList();
@@ -270,8 +272,13 @@ git commit -m "feat: kimlik dogrulamayi ASP.NET Core Identity'ye tasi"
 ```csharp
 [Fact] public async Task Kullanici_yokken_seeder_admini_olusturur_ve_role_ekler() { /* RunAsync() -> SeedOutcome.Created; UserManager.FindByEmailAsync(...) null degil; IsInRoleAsync(user,"Admin") true */ }
 [Fact] public async Task Kullanici_varken_seeder_ikinci_kullanici_olusturmaz() { /* iki kez RunAsync(); ikincisi SeedOutcome.SkippedUserExists; db.Users.Count() == 1 */ }
-[Fact] public async Task Kullanici_ve_sifre_yokken_seeder_hata_firlatir() { /* ADMIN_SEED_PASSWORD bos -> InvalidOperationException */ }
+[Fact] public async Task Kullanici_ve_sifre_yokken_seeder_hata_firlatir() { /* InvalidOperationException */ }
 ```
+
+**İki kısıt — bunlar olmadan testler çalışmaz:**
+
+- Adım 4 açılışta seed çağıracağı için test veritabanında **zaten bir kullanıcı olacak.** İlk iki test, arrange adımında mevcut tüm kullanıcıları `UserManager` ile silmek, sonra `RunAsync` çağırmak zorunda.
+- Üçüncü test paylaşılan factory ile çalışamaz, çünkü factory `ADMIN_SEED_PASSWORD`'ü her zaman kuruyor. Bu test `AdminSeeder`'ı **doğrudan** inşa edecek: factory'den `UserManager` ve `RoleManager` alınacak, `IConfiguration` olarak test içinde kurulmuş boş bir `ConfigurationBuilder().Build()` verilecek.
 
 - [ ] **Adım 2: Testleri çalıştırıp başarısız olduklarını gör.**
   Çalıştır: `dotnet test --filter AdminSeederTests`
@@ -506,7 +513,7 @@ git commit -m "feat: admin panelinden gorsel yukleme"
 - [ ] **Adım 1: Başarısız olacak testleri yaz.**
 ```csharp
 [Fact] public async Task Gecerli_mesaj_kaydediliyor() { /* POST -> 302; UserMessages sayisi 1 artiyor */ }
-[Fact] public async Task Gecersiz_eposta_kaydedilmiyor() { /* sayi artmiyor, 200 donuyor */ }
+[Fact] public async Task Gecersiz_eposta_kaydedilmiyor() { /* sayi artmiyor, 302 donuyor (Adim 3 RedirectToAction + TempData kullaniyor, View degil) */ }
 [Fact] public async Task Honeypot_dolu_ise_kaydedilmiyor() { /* Website="spam" -> sayi artmiyor, yine 302 donuyor */ }
 [Fact] public async Task Dorduncu_mesaj_rate_limit_e_takiliyor() { /* ayni istemciden 4. POST -> 429 */ }
 ```
@@ -632,15 +639,18 @@ git commit -m "ci: build, test ve self-hosted runner ile deploy hatti"
 - Consumes: `Site:BaseUrl` (Görev 1).
 - Produces: Her public bölüm, verisi yoksa kendini render etmez.
 
-- [ ] **Adım 1: Review Focus #1 — başarısız olacak testi yaz.**
+- [ ] **Adım 1: Review Focus #1 — başarısız olacak testi yaz.** Bu test **kendi factory örneğini** kullanacak (`PortfolioAppFactory`'ye farklı bir veritabanı adı verilerek), paylaşılan test veritabanını boşaltmayacak — aksi halde diğer testler çalışma sırasına bağımlı hale gelir ve CI'da rastgele kırılır.
 ```csharp
 [Fact] public async Task Tum_icerik_tablolari_bosken_anasayfa_200_doner()
 {
-    // tum icerik tablolarini temizle, sonra:
+    await using var factory = new PortfolioAppFactory(dbName: "PortfolioDb_Empty");
+    // bu izole veritabanindaki tum icerik tablolarini temizle, sonra:
+    var client = factory.CreateAnonymousClient();
     var response = await client.GetAsync("/");
     Assert.Equal(HttpStatusCode.OK, response.StatusCode);
 }
 ```
+  `PortfolioAppFactory`'nin isteğe bağlı `dbName` parametresi alacak şekilde genişletilmesi bu adımın parçası.
 
 - [ ] **Adım 2: Testi çalıştırıp başarısız olduğunu gör.**
   Çalıştır: `dotnet test --filter EmptyContentTests`
