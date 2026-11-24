@@ -166,6 +166,19 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Default}/{action=Index}/{id?}");
 
+// Eslesmeyen her yol icin anonim bir endpoint. Bu rota olmadan bilinmeyen URL'in
+// hic endpoint'i olmuyor; FallbackPolicy endpoint'siz isteklere de uygulandigi icin
+// Admin rolu isteniyor, yetkilendirme 302 ile kisa devre yapiyor ve ziyaretci
+// admin giris sayfasina atiliyor -- UseStatusCodePages 404'u hic gormuyor.
+// Kisit YOK: "nonfile" eklenirse eksik statik dosyalar (ornegin /css/yok.css) bu
+// rotanin disinda kalir, yine endpoint'siz olur ve yine 302 ile giris sayfasina
+// yonlenir -- bir tarama botuna admin panelinin varligini duyurur. Uzantili yollar
+// da buraya dusup 404 almali.
+app.MapControllerRoute(
+    name: "notfound",
+    pattern: "{*path}",
+    defaults: new { controller = "Home", action = "Error", statusCode = 404 });
+
 // Yuklenen gorsellerin klasoru acilista hazir olsun: ilk yukleme "klasor yok"
 // hatasina dusmesin, statik dosya katmani da yolu tanisin.
 app.Services.GetRequiredService<LocalImageStorage>().EnsureUploadsRoot();
