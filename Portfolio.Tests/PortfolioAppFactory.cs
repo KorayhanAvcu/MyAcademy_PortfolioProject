@@ -7,6 +7,16 @@ using Portfolio.Data.Context;
 
 namespace Portfolio.Tests;
 
+// Fabrika tek ortak test veritabanini olusturup siliyor; IClassFixture her test
+// sinifina ayri bir ornek verdigi icin iki sinif paralel calisirken ayni
+// veritabanini es zamanli olusturmaya calisiyordu. Collection fixture ile tek
+// ornek paylasilir ve siniflar sirayla kosar.
+[CollectionDefinition(Name)]
+public class PortfolioAppCollection : ICollectionFixture<PortfolioAppFactory>
+{
+    public const string Name = "portfolio-app";
+}
+
 public class PortfolioAppFactory : WebApplicationFactory<Program>, IAsyncLifetime
 {
     // Tek degisiklik noktasi: testlerin kullandigi veritabani adi. Canli "PortfolioDb" ASLA kullanilmaz.

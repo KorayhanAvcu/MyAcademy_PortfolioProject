@@ -6,8 +6,8 @@ namespace Portfolio.ViewComponents.AdminLayout
     {
         public IViewComponentResult Invoke()
         {
-            ViewBag.fullName = HttpContext.Session.GetString("fullName");
-            ViewBag.imgUrl = HttpContext.Session.GetString("imageUrl");
+            ViewBag.fullName = UserClaimsPrincipal.FindFirst("fullname")?.Value;
+            ViewBag.imgUrl = UserClaimsPrincipal.FindFirst("imageUrl")?.Value;
             return View();
         }
     }

@@ -2,7 +2,8 @@ using System.Net;
 
 namespace Portfolio.Tests;
 
-public class PublicSiteTests : IClassFixture<PortfolioAppFactory>
+[Collection(PortfolioAppCollection.Name)]
+public class PublicSiteTests
 {
     private readonly PortfolioAppFactory _factory;
     public PublicSiteTests(PortfolioAppFactory factory) => _factory = factory;
