@@ -29,6 +29,10 @@ namespace Portfolio.ViewComponents.Default_Portfolio
             })
             .ToList();
 
+            // Proje yoksa bolum (ve slider) hic cizilmez.
+            if (projects.Count == 0)
+                return Content(string.Empty);
+
             return View(projects);
         }
     }

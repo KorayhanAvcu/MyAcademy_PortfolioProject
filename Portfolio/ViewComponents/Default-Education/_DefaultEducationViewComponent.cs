@@ -14,6 +14,11 @@ namespace Portfolio.ViewComponents.Default_Education
         public IViewComponentResult Invoke()
         {
             var educations = _context.Educations.ToList();
+
+            // Veri yoksa bolum hic cizilmez.
+            if (educations.Count == 0)
+                return Content(string.Empty);
+
             return View(educations);
         }
     }

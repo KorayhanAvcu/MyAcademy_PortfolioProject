@@ -1,11 +1,28 @@
-﻿
+﻿@model PageMetaVM
 @*
    Head
 *@
 <head>
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-    <title>Alex Dev | Portfolio</title>
+
+    @* Baslik, aciklama, Open Graph ve canonical: hepsi Site:* yapilandirmasindan. *@
+    <title>@Model.Title</title>
+    <meta name="description" content="@Model.Description" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="@Model.Title" />
+    <meta property="og:description" content="@Model.Description" />
+    @if (Model.ImageUrl != null)
+    {
+        <meta property="og:image" content="@Model.ImageUrl" />
+    }
+    @if (Model.CanonicalUrl != null)
+    {
+        <meta property="og:url" content="@Model.CanonicalUrl" />
+        <link rel="canonical" href="@Model.CanonicalUrl" />
+    }
+
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&amp;display=swap" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet" />
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>

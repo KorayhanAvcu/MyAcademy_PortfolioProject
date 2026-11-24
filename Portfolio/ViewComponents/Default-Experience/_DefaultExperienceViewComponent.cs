@@ -14,6 +14,11 @@ namespace Portfolio.ViewComponents.Default_Experience
         public IViewComponentResult Invoke()
         {
             var experiences = _context.Experiences.ToList();
+
+            // Veri yoksa bolum hic cizilmez.
+            if (experiences.Count == 0)
+                return Content(string.Empty);
+
             return View(experiences);
         }
     }

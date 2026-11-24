@@ -15,20 +15,24 @@
         <!-- About Section -->
         @await Component.InvokeAsync("_DefaultAbout")
         <!-- Experience & Education Section -->
-        <section class="py-section-padding-mobile md:py-section-padding-desktop px-gutter relative" id="experience">
-            <div class="max-w-container-max mx-auto">
-                <div class="text-center mb-stack-lg">
-                    <h2 class="font-headline-md text-headline-md text-on-background">Özgeçmiş</h2>
-                    <p class="font-body-md text-body-md text-on-surface-variant mt-2">Mesleki kariyerim ve akademik geçmişim.</p>
+        @* Deneyim de egitim de bossa bolumun basligi bile cizilmez. *@
+        @if ((ViewData["HasResume"] as bool?) == true)
+        {
+            <section class="py-section-padding-mobile md:py-section-padding-desktop px-gutter relative" id="experience">
+                <div class="max-w-container-max mx-auto">
+                    <div class="text-center mb-stack-lg">
+                        <h2 class="font-headline-md text-headline-md text-on-background">Özgeçmiş</h2>
+                        <p class="font-body-md text-body-md text-on-surface-variant mt-2">Mesleki kariyerim ve akademik geçmişim.</p>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-stack-lg">
+                        <!-- Experience -->
+                        @await Component.InvokeAsync("_DefaultExperience")
+                        <!-- Education -->
+                        @await Component.InvokeAsync("_DefaultEducation")
+                    </div>
                 </div>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-stack-lg">
-                    <!-- Experience -->
-                    @await Component.InvokeAsync("_DefaultExperience")
-                    <!-- Education -->
-                    @await Component.InvokeAsync("_DefaultEducation")
-                </div>
-            </div>
-        </section>
+            </section>
+        }
         <!-- Services Section -->
         @await Component.InvokeAsync("_DefaultService")
         <!-- Portfolio Slider Section -->

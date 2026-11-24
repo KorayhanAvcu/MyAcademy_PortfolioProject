@@ -30,6 +30,11 @@ namespace Portfolio.ViewComponents.Default_AboutSkills
                     Skills = string.Join(", ", x.Select(y => y.Name))
                 })
                 .ToList();
+
+            // Yetkinlik yoksa bolum hic cizilmez.
+            if (skills.Count == 0)
+                return Content(string.Empty);
+
             return View(skills);
         }
     }

@@ -15,6 +15,12 @@ namespace Portfolio.ViewComponents.Default_Index
         public IViewComponentResult Invoke()
         {
             var about = _context.Abouts.ToList();
+
+            // Bolum yetkinlikler alt bolumunu de iceriyor: ikisi de bossa hic
+            // cizilmez, biri varsa bolum kalir (digeri kendini gizler).
+            if (about.Count == 0 && !_context.Skills.Any())
+                return Content(string.Empty);
+
             return View(about);
         }
     }

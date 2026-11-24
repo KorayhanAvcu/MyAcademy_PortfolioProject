@@ -14,6 +14,11 @@ namespace Portfolio.ViewComponents.Default_Service
         public IViewComponentResult Invoke()
         {
             var service = _context.Services.ToList();
+
+            // Veri yoksa bolum hic cizilmez.
+            if (service.Count == 0)
+                return Content(string.Empty);
+
             return View(service);
         }
     }
