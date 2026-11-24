@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Portfolio.Data.Entities
 {
@@ -10,8 +11,12 @@ namespace Portfolio.Data.Entities
         [Required(ErrorMessage = "Hakkımda Açıklaması boş bırakılamaz.")]
         [MaxLength(2000, ErrorMessage = "Hakkımda Açıklaması en fazla 2000 karakter olmalıdır.")]
         public string Descripton { get; set; }
-        [Required(ErrorMessage = "Görsel Url boş bırakılamaz.")]
+        // Dosya yukleme veya harici URL: ikisinden biri yeterli oldugu icin bu alan
+        // artik tek basina zorunlu degil, kontrol controller'da iki alana birlikte bakar.
         public string ImageUrl { get; set; }
 
+        /// <summary>Panelden yuklenen gorsel. Veritabanina yazilmaz.</summary>
+        [NotMapped]
+        public IFormFile? ImageFile { get; set; }
     }
 }

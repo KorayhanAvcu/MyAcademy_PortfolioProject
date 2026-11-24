@@ -13,5 +13,10 @@ namespace Portfolio.Controllers
     [LocalOnly]
     public abstract class AdminControllerBase : Controller
     {
+        /// <summary>
+        /// Gorsel alani icin ortak hata metni: dosya da URL de verilmediginde gosterilir.
+        /// </summary>
+        protected const string ImageRequiredMessage =
+            "Bir görsel dosyası yükleyin veya görsel URL'si girin.";
     }
 }

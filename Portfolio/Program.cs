@@ -5,8 +5,13 @@ using Microsoft.EntityFrameworkCore;
 using Portfolio.Data.Context;
 using Portfolio.Data.Entities;
 using Portfolio.Infrastructure;
+using Portfolio.Services;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Uygulama sinirinin (2 MB) USTUNDE bir ham govde siniri: boylece buyuk bir dosya
+// Kestrel'in ciplak 413'u yerine formda anlasilir bir hata mesaji olarak gorunur.
+builder.WebHost.ConfigureKestrel(options => options.Limits.MaxRequestBodySize = 8 * 1024 * 1024);
 
 // Add services to the container.
 // Eksik baglanti string'i ilk sorguya kadar fark edilmesin: SqlClient'in anlasilmaz
@@ -42,6 +47,10 @@ builder.Services.ConfigureApplicationCookie(options =>
 });
 
 builder.Services.AddScoped<AdminSeeder>();
+
+// Gorsel yukleme: durumsuz, yalnizca IWebHostEnvironment'a bagli.
+builder.Services.AddSingleton<LocalImageStorage>();
+builder.Services.AddSingleton<IImageStorage>(sp => sp.GetRequiredService<LocalImageStorage>());
 
 // Global AuthorizeFilter yerine fallback politika: nitelik yazmayi unutan bir
 // controller boyle de kapali kalir, ama [AllowAnonymous] ve [Authorize] niteligi
@@ -93,6 +102,10 @@ app.MapControllerRoute(
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Default}/{action=Index}/{id?}");
+
+// Yuklenen gorsellerin klasoru acilista hazir olsun: ilk yukleme "klasor yok"
+// hatasina dusmesin, statik dosya katmani da yolu tanisin.
+app.Services.GetRequiredService<LocalImageStorage>().EnsureUploadsRoot();
 
 // Sema ve tek admin kullanicisi acilista hazirlanir.
 using (var scope = app.Services.CreateScope())

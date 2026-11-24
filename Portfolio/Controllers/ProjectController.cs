@@ -1,16 +1,22 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Portfolio.Data.Context;
 using Portfolio.Data.Entities;
+using Portfolio.Services;
 
 namespace Portfolio.Controllers
 {
     public class ProjectController : AdminControllerBase
     {
-        private readonly AppDbContext _context;
+        private const string UploadFolder = "project";
 
-        public ProjectController(AppDbContext context)
+        private readonly AppDbContext _context;
+        private readonly IImageStorage _imageStorage;
+
+        public ProjectController(AppDbContext context, IImageStorage imageStorage)
         {
             _context = context;
+            _imageStorage = imageStorage;
         }
 
         public IActionResult Index()
@@ -18,6 +24,7 @@ namespace Portfolio.Controllers
             var projects = _context.Projects.ToList();
             return View(projects);
         }
+
         [HttpGet]
         public IActionResult CreateProject()
         {
@@ -25,14 +32,36 @@ namespace Portfolio.Controllers
         }
 
         [HttpPost]
-        public IActionResult CreateProject(Project project)
+        public async Task<IActionResult> CreateProject(Project project, CancellationToken ct)
         {
+            // ImageUrl'in kendi zorunlulugu kalkti: dosya ya da URL yeterli.
+            ModelState.Remove(nameof(Project.ImageUrl));
+
             if (!ModelState.IsValid)
             {
                 return View(project);
             }
+
+            if (project.ImageFile != null)
+            {
+                var result = await _imageStorage.SaveAsync(project.ImageFile, UploadFolder, ct);
+                if (!result.Success)
+                {
+                    ModelState.AddModelError(nameof(Project.ImageFile), result.ErrorMessage!);
+                    return View(project);
+                }
+
+                project.ImageUrl = result.RelativeUrl!;
+            }
+
+            if (string.IsNullOrWhiteSpace(project.ImageUrl))
+            {
+                ModelState.AddModelError(nameof(Project.ImageUrl), ImageRequiredMessage);
+                return View(project);
+            }
+
             _context.Projects.Add(project);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync(ct);
             return RedirectToAction("Index");
         }
 
@@ -43,14 +72,55 @@ namespace Portfolio.Controllers
         }
 
         [HttpPost]
-        public IActionResult UpdateProject(Project project)
+        public async Task<IActionResult> UpdateProject(Project project, CancellationToken ct)
         {
+            ModelState.Remove(nameof(Project.ImageUrl));
+
             if (!ModelState.IsValid)
             {
                 return View(project);
             }
+
+            var current = await _context.Projects
+                .AsNoTracking()
+                .FirstOrDefaultAsync(x => x.Id == project.Id, ct);
+
+            if (current == null)
+            {
+                return NotFound();
+            }
+
+            // Yeni dosya basariyla kaydedilirse eski yuklenmis dosya kayittan SONRA silinir.
+            string? replacedUpload = null;
+
+            if (project.ImageFile != null)
+            {
+                var result = await _imageStorage.SaveAsync(project.ImageFile, UploadFolder, ct);
+                if (!result.Success)
+                {
+                    ModelState.AddModelError(nameof(Project.ImageFile), result.ErrorMessage!);
+                    return View(project);
+                }
+
+                replacedUpload = current.ImageUrl;
+                project.ImageUrl = result.RelativeUrl!;
+            }
+            else if (string.IsNullOrWhiteSpace(project.ImageUrl))
+            {
+                // Dosya secilmedi ve URL bos geldi: mevcut gorsel aynen korunur.
+                project.ImageUrl = current.ImageUrl;
+            }
+
+            if (string.IsNullOrWhiteSpace(project.ImageUrl))
+            {
+                ModelState.AddModelError(nameof(Project.ImageUrl), ImageRequiredMessage);
+                return View(project);
+            }
+
             _context.Projects.Update(project);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync(ct);
+
+            _imageStorage.Delete(replacedUpload);
             return RedirectToAction("Index");
         }
 
@@ -63,8 +133,12 @@ namespace Portfolio.Controllers
                 return NotFound();
             }
 
+            var imageUrl = project.ImageUrl;
+
             _context.Projects.Remove(project);
             _context.SaveChanges();
+
+            _imageStorage.Delete(imageUrl);
             return RedirectToAction("Index");
         }
     }

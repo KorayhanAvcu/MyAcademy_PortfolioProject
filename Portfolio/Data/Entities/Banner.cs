@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Portfolio.Data.Entities
 {
@@ -6,8 +7,13 @@ namespace Portfolio.Data.Entities
     {
         public int Id { get; set; }
 
-        [Required(ErrorMessage = "Görsel URL'si zorunludur.")]
+        // Dosya yukleme veya harici URL: ikisinden biri yeterli oldugu icin bu alan
+        // artik tek basina zorunlu degil, kontrol controller'da iki alana birlikte bakar.
         public string ImageUrl { get; set; }
+
+        /// <summary>Panelden yuklenen gorsel. Veritabanina yazilmaz.</summary>
+        [NotMapped]
+        public IFormFile? ImageFile { get; set; }
 
         [Required(ErrorMessage = "Başlık alanı zorunludur.")]
         [StringLength(100, ErrorMessage = "Başlık en fazla 100 karakter olabilir.")]

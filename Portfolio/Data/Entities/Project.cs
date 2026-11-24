@@ -1,12 +1,18 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Portfolio.Data.Entities
 {
     public class Project
     {
         public int Id { get; set; }
-        [Required(ErrorMessage ="Görsel Url boş bırakılamaz.")]
+        // Dosya yukleme veya harici URL: ikisinden biri yeterli oldugu icin bu alan
+        // artik tek basina zorunlu degil, kontrol controller'da iki alana birlikte bakar.
         public string ImageUrl{ get; set; }
+
+        /// <summary>Panelden yuklenen gorsel. Veritabanina yazilmaz.</summary>
+        [NotMapped]
+        public IFormFile? ImageFile { get; set; }
         [Required(ErrorMessage = "Proje Adı boş bırakılamaz.")]
         [MinLength(3,ErrorMessage ="Proje Adı en az 3 karakter  olmalıdır.")]
         public string Name { get; set; }

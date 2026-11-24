@@ -12,7 +12,7 @@
 
     <div class="card-body bg-white">
 
-        <form method="post">
+        <form method="post" enctype="multipart/form-data">
 
             <div class="mb-3">
                 <label asp-for="Name" class="form-label">Proje Adı</label>
@@ -24,6 +24,10 @@
                 <label asp-for="ImageUrl" class="form-label">Görsel URL</label>
                 <input asp-for="ImageUrl" class="form-control" />
                 <span asp-validation-for="ImageUrl" class="text-danger"></span>
+                <div class="form-text">Dosya seçerseniz URL yerine yüklediğiniz görsel kullanılır.</div>
+                <label asp-for="ImageFile" class="form-label mt-2">Görsel Dosyası (.jpg, .jpeg, .png, .webp — en fazla 2 MB)</label>
+                <input asp-for="ImageFile" type="file" class="form-control" accept=".jpg,.jpeg,.png,.webp" />
+                <span asp-validation-for="ImageFile" class="text-danger"></span>
             </div>
 
             <div class="mb-3">
