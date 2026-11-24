@@ -7,7 +7,7 @@ using Portfolio.Models;
 
 namespace Portfolio.Controllers
 {
-    public class ProjectTechStacksController : Controller
+    public class ProjectTechStacksController : AdminControllerBase
     {
         private readonly AppDbContext _context;
 

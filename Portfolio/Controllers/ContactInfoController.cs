@@ -4,7 +4,7 @@ using Portfolio.Data.Entities;
 
 namespace Portfolio.Controllers
 {
-    public class ContactInfoController : Controller
+    public class ContactInfoController : AdminControllerBase
     {
         private readonly AppDbContext _context;
 

@@ -1,5 +1,5 @@
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Portfolio.Data.Context;
 using Portfolio.Data.Entities;
@@ -42,10 +42,17 @@ builder.Services.ConfigureApplicationCookie(options =>
 
 builder.Services.AddScoped<AdminSeeder>();
 
-builder.Services.AddControllersWithViews(options =>
+// Global AuthorizeFilter yerine fallback politika: nitelik yazmayi unutan bir
+// controller boyle de kapali kalir, ama [AllowAnonymous] ve [Authorize] niteligi
+// olan endpoint'ler kendi kurallarini kullanir.
+builder.Services.AddAuthorization(options =>
 {
-    options.Filters.Add(new AuthorizeFilter());
+    options.FallbackPolicy = new AuthorizationPolicyBuilder()
+        .RequireRole("Admin")
+        .Build();
 });
+
+builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
 
@@ -57,12 +64,23 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
+// 404 / 403 gibi govdesiz durum kodlari icin hata sayfasini yeniden calistir.
+app.UseStatusCodePagesWithReExecute("/Home/Error/{0}");
+
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
+app.UseLocalOnlyEndpoints();
 app.UseAuthentication();
 app.UseAuthorization();
+
+// "/Home/Error/404" yolundaki segment statusCode'a baglanmali; varsayilan rota
+// onu "id" olarak baglardi.
+app.MapControllerRoute(
+    name: "error",
+    pattern: "Home/Error/{statusCode?}",
+    defaults: new { controller = "Home", action = "Error" });
 
 app.MapControllerRoute(
     name: "default",

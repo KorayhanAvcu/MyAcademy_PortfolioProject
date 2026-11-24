@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Portfolio.Data.Entities;
+using Portfolio.Infrastructure;
 using Portfolio.Models;
 
 namespace Portfolio.Controllers
@@ -10,7 +11,8 @@ namespace Portfolio.Controllers
     // Authorization middleware endpoint uzerinde bir IAllowAnonymous metadata'si
     // gorurse yetki degerlendirmesini tumuyle atlar; controller duzeyinde kalirsa
     // ChangePassword'un [Authorize] niteligi etkisiz kalir ve sayfa anonim acilir.
-    // Giris sayfasi yine anonim erisilebilir.
+    // Giris sayfasi yine anonim erisilebilir — ama yalnizca localhost'tan.
+    [LocalOnly]
     public class AuthController : Controller
     {
         private readonly SignInManager<AppUser> _signInManager;

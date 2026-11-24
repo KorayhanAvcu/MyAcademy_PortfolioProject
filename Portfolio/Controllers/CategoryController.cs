@@ -5,7 +5,7 @@ using System.Reflection;
 
 namespace Portfolio.Controllers
 {
-    public class CategoryController : Controller
+    public class CategoryController : AdminControllerBase
     {
         private readonly AppDbContext _context;
 

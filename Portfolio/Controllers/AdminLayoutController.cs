@@ -2,7 +2,7 @@
 
 namespace Portfolio.Controllers
 {
-    public class AdminLayoutController : Controller
+    public class AdminLayoutController : AdminControllerBase
     {
         public IActionResult Layout()
         {

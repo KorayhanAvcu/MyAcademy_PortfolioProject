@@ -4,7 +4,7 @@ using Portfolio.Data.Entities;
 
 namespace Portfolio.Controllers
 {
-    public class ProjectController : Controller
+    public class ProjectController : AdminControllerBase
     {
         private readonly AppDbContext _context;
 

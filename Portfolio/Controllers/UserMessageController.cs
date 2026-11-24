@@ -4,7 +4,7 @@ using Portfolio.Data.Entities;
 
 namespace Portfolio.Controllers
 {
-    public class UserMessageController : Controller
+    public class UserMessageController : AdminControllerBase
     {
         private readonly AppDbContext _context;
 

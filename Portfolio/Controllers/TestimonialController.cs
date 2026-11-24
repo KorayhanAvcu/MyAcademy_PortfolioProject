@@ -4,7 +4,7 @@ using Portfolio.Data.Entities;
 
 namespace Portfolio.Controllers
 {
-    public class TestimonialController : Controller
+    public class TestimonialController : AdminControllerBase
     {
         private readonly AppDbContext _context;
 

@@ -6,7 +6,7 @@ using Portfolio.Models;
 
 namespace Portfolio.Controllers
 {
-    public class DashboardController : Controller
+    public class DashboardController : AdminControllerBase
     {
         private readonly AppDbContext _context;
 

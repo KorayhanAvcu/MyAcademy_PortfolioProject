@@ -4,7 +4,7 @@ using Portfolio.Data.Entities;
 
 namespace Portfolio.Controllers
 {
-    public class ExperienceController : Controller
+    public class ExperienceController : AdminControllerBase
     {
         private readonly AppDbContext _context;
 
