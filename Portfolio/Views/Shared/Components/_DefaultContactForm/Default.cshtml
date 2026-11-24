@@ -1,7 +1,24 @@
-﻿@model UserMessage
+@model ContactFormVM
 
 <div class="glass-card p-stack-lg rounded-xl">
+
+    @if (TempData[Portfolio.Controllers.DefaultController.ContactSuccessKey] is string basariliMesaj)
+    {
+        <p class="mb-stack-md font-body-md text-body-md text-primary">@basariliMesaj</p>
+    }
+
+    @if (TempData[Portfolio.Controllers.DefaultController.ContactErrorKey] is string hataMesaji)
+    {
+        <p class="mb-stack-md font-body-md text-body-md text-error">@hataMesaji</p>
+    }
+
     <form asp-controller="Default" asp-action="CreateUserMessage" method="post" class="flex flex-col gap-stack-md">
+
+        @* Honeypot: insan ziyaretci gormez, bot doldurur. Dolu gelirse mesaj kaydedilmez. *@
+        <div aria-hidden="true" style="position:absolute; left:-9999px; top:auto; width:1px; height:1px; overflow:hidden;">
+            <label asp-for="Website">Website</label>
+            <input asp-for="Website" type="text" tabindex="-1" autocomplete="off" />
+        </div>
 
         <div>
             <label asp-for="Name" class="font-label-sm text-label-sm text-on-surface-variant block mb-2"></label>

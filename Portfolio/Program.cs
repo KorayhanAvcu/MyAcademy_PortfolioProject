@@ -1,13 +1,28 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using System.Threading.RateLimiting;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
 using Portfolio.Data.Context;
 using Portfolio.Data.Entities;
 using Portfolio.Infrastructure;
 using Portfolio.Services;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Loglar hem konsola hem gunluk donen dosyaya; 14 gun saklanir (logs/ .gitignore'da).
+builder.Host.UseSerilog((context, configuration) => configuration
+    .ReadFrom.Configuration(context.Configuration)
+    .WriteTo.Console()
+    .WriteTo.File(
+        Path.Combine(context.HostingEnvironment.ContentRootPath, "logs", "portfolio-.log"),
+        rollingInterval: RollingInterval.Day,
+        retainedFileCountLimit: 14,
+        // Ayni dosyaya birden fazla host yazabilir (ornegin testlerde ikinci bir
+        // host kuruldugunda); paylasimli kip dosya kilidi hatasini onler.
+        shared: true));
 
 // Uygulama sinirinin (2 MB) USTUNDE bir ham govde siniri: boylece buyuk bir dosya
 // Kestrel'in ciplak 413'u yerine formda anlasilir bir hata mesaji olarak gorunur.
@@ -62,6 +77,26 @@ builder.Services.AddAuthorization(options =>
         .Build();
 });
 
+// Iletisim formu: IP basina 5 dakikada 3 istek. Gercek ziyaretci IP'si icin
+// UseForwardedHeaders bu limitleyiciden ONCE calismak zorunda (yoksa tum tunel
+// trafigi proxy'nin tek adresinde birikir).
+builder.Services.AddRateLimiter(options =>
+{
+    // Varsayilan 503 degil: istemci "cok fazla istek" yanitini almali.
+    options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
+
+    options.AddPolicy("contact", httpContext =>
+        RateLimitPartition.GetFixedWindowLimiter(
+            partitionKey: httpContext.Connection.RemoteIpAddress?.ToString() ?? "bilinmeyen",
+            factory: _ => new FixedWindowRateLimiterOptions
+            {
+                PermitLimit = 3,
+                Window = TimeSpan.FromMinutes(5),
+                QueueLimit = 0,
+                QueueProcessingOrder = QueueProcessingOrder.OldestFirst,
+            }));
+});
+
 // View'lardaki silme islemleri token'i gizli alandan okuyup header'da gonderiyor.
 builder.Services.AddAntiforgery(options => options.HeaderName = "RequestVerificationToken");
 
@@ -88,6 +123,10 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
+
+// Endpoint'e bagli politikalar ([EnableRateLimiting]) icin UseRouting'den sonra.
+app.UseRateLimiter();
+
 app.UseLocalOnlyEndpoints();
 app.UseAuthentication();
 app.UseAuthorization();

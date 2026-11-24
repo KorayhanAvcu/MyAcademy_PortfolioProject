@@ -36,14 +36,17 @@
             });
         });
 
-        // Search bar focus effect
+        // Search bar focus effect. Arama alani her sayfada yok; null gelirse
+        // devami hic calismasin (yoksa sayfadaki tum script bu satirda kirilir).
         const searchInput = document.querySelector('input[type="text"]');
-        searchInput.addEventListener('focus', () => {
-            searchInput.parentElement.classList.add('w-80');
-        });
-        searchInput.addEventListener('blur', () => {
-            searchInput.parentElement.classList.remove('w-80');
-        });
+        if (searchInput) {
+            searchInput.addEventListener('focus', () => {
+                searchInput.parentElement.classList.add('w-80');
+            });
+            searchInput.addEventListener('blur', () => {
+                searchInput.parentElement.classList.remove('w-80');
+            });
+        }
     </script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
