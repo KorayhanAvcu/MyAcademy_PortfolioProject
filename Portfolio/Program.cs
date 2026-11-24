@@ -49,3 +49,5 @@ app.MapControllerRoute(
     pattern: "{controller=Default}/{action=Index}/{id?}");
 
 app.Run();
+
+public partial class Program { }
