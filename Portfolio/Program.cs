@@ -8,7 +8,13 @@ using Portfolio.Infrastructure;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddDbContext<AppDbContext>(o => o.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+// Eksik baglanti string'i ilk sorguya kadar fark edilmesin: SqlClient'in anlasilmaz
+// hatasi yerine acilista anlasilir bir hata (Ruling I).
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+if (string.IsNullOrWhiteSpace(connectionString))
+    throw new InvalidOperationException("ConnectionStrings:DefaultConnection yapılandırılmamış");
+
+builder.Services.AddDbContext<AppDbContext>(o => o.UseSqlServer(connectionString));
 
 builder.Services.AddIdentity<AppUser, IdentityRole>(options =>
 {
@@ -33,6 +39,8 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
     options.SlidingExpiration = true;
 });
+
+builder.Services.AddScoped<AdminSeeder>();
 
 builder.Services.AddControllersWithViews(options =>
 {
@@ -59,6 +67,16 @@ app.UseAuthorization();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Default}/{action=Index}/{id?}");
+
+// Sema ve tek admin kullanicisi acilista hazirlanir.
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    db.Database.Migrate();
+
+    var seeder = scope.ServiceProvider.GetRequiredService<AdminSeeder>();
+    await seeder.RunAsync();
+}
 
 app.Run();
 

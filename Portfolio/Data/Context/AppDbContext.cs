@@ -10,9 +10,6 @@ namespace Portfolio.Data.Context
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
         public DbSet<About> Abouts { get; set; }
-        // Eski admin tablosu: AuthController hala buna bagli. Entity, DbSet ve tablo
-        // birlikte Task 4'te kaldirilacak (Ruling U).
-        public DbSet<Admin> Admins { get; set; }
         public DbSet<Banner> Banners { get; set; }
         public DbSet<Category> Categories { get; set; }
         public DbSet<ContactInfo> ContactInfos { get; set; }

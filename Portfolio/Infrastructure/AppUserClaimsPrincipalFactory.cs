@@ -23,10 +23,13 @@ namespace Portfolio.Infrastructure
         {
             var identity = await base.GenerateClaimsAsync(user);
 
-            // Bos degerler icin claim yazilmaz: Claim degeri null olamaz.
-            if (!string.IsNullOrEmpty(user.FullName))
-                identity.AddClaim(new Claim("fullname", user.FullName));
+            // Ruling CC: fullname kosulsuz eklenir. FullName non-nullable ve ""
+            // varsayilanina sahip; Claim yapicisi yalnizca null reddediyor. Kosula
+            // baglanirsa FullName'i bos olan kullanici HIC claim almaz ve sidebar
+            // bos render edilir.
+            identity.AddClaim(new Claim("fullname", user.FullName));
 
+            // ImageUrl gercekten nullable; buradaki kontrol kaliyor.
             if (!string.IsNullOrEmpty(user.ImageUrl))
                 identity.AddClaim(new Claim("imageUrl", user.ImageUrl));
 

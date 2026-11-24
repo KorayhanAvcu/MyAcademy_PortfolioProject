@@ -187,16 +187,17 @@
             <form asp-action="Login" asp-controller="Auth" method="post" class="space-y-lg" id="loginForm">
                 @Html.AntiForgeryToken()
 
-                <!-- Kullanıcı Adı Alanı -->
+                <!-- E-posta Alanı -->
                 <div class="group">
-                    <label class="font-label-md text-label-md text-on-surface-variant mb-xs block" asp-for="UserName">Kullanıcı Adı</label>
+                    <label class="font-label-md text-label-md text-on-surface-variant mb-xs block" asp-for="Email">E-posta</label>
                     <div class="relative">
-                        <span class="material-symbols-outlined absolute left-md top-1/2 -translate-y-1/2 text-outline group-focus-within:text-primary transition-colors">person</span>
-                        <input asp-for="UserName"
+                        <span class="material-symbols-outlined absolute left-md top-1/2 -translate-y-1/2 text-outline group-focus-within:text-primary transition-colors">mail</span>
+                        <input asp-for="Email"
                                class="w-full glass-input border-0 border-b-2 border-outline-variant py-sm pl-[44px] pr-md font-body-md text-body-md focus:border-primary focus:ring-0 rounded-t-lg"
-                               placeholder="Kullanıcı adınızı girin" />
+                               type="email"
+                               placeholder="E-posta adresinizi girin" />
                     </div>
-                    <span asp-validation-for="UserName" class="field-error"></span>
+                    <span asp-validation-for="Email" class="field-error"></span>
                 </div>
 
                 <!-- Şifre Alanı -->
