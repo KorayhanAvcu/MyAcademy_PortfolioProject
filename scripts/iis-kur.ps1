@@ -152,14 +152,14 @@ $deadline = (Get-Date).AddSeconds(60)
 $ok = $false
 while ((Get-Date) -lt $deadline) {
     try {
-        $r = Invoke-WebRequest -Uri "http://localhost:$Port/" -UseBasicParsing -TimeoutSec 5
+        $r = Invoke-WebRequest -Uri "http://127.0.0.1:$Port/" -UseBasicParsing -TimeoutSec 5
         if ($r.StatusCode -eq 200) { $ok = $true; break }
     } catch { Start-Sleep -Seconds 3 }
 }
 
 Write-Host ""
 if ($ok) {
-    Write-Host "IIS uzerinden yayinda: http://localhost:$Port/" -ForegroundColor Green
+    Write-Host "IIS uzerinden yayinda: http://127.0.0.1:$Port/" -ForegroundColor Green
     if ($restartGerekli) {
         Write-Host "NOT: Windows bazi IIS ozellikleri icin yeniden baslatma istiyor." -ForegroundColor Yellow
     }
