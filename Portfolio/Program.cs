@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
+using System.Net;
 using Portfolio.Data.Context;
 using Portfolio.Data.Entities;
 using Portfolio.Infrastructure;
@@ -86,14 +87,23 @@ builder.Services.AddAuthorization(options =>
         .Build();
 });
 
-// Tunel (cloudflared/ngrok) arkasinda calisirken gercek ziyaretci IP'si ve sema
-// yalnizca X-Forwarded-* basliklarindan okunabilir. Proxy loopback'ten bagladigi
-// icin KnownNetworks/KnownProxies temizlenir; aksi halde basliklar yok sayilir.
+// Tunel arkasinda calisirken gercek ziyaretci IP'si ve sema yalnizca
+// X-Forwarded-* basliklarindan okunabilir.
+//
+// GUVENLIK: Bu basliklara YALNIZCA baglantinin kendisi loopback'ten geliyorsa
+// guvenilir. Tunel istemcisi ayni makinede calisip 127.0.0.1 uzerinden
+// bagladigi icin bu yeterli. KnownProxies tamamen bosaltilirsa (onceki hali)
+// "herkese guven" anlamina gelir; o zaman porta ulasabilen biri
+// "X-Forwarded-For: 127.0.0.1" gondererek kendini yerel gosterip
+// LocalOnly kisitini asar ve admin paneline ulasir. IIS'e gecildiginde port
+// 0.0.0.0'da dinlendigi icin bu yerel agdan gercekten sömürülebilir hale geldi.
 builder.Services.Configure<ForwardedHeadersOptions>(options =>
 {
     options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
     options.KnownNetworks.Clear();
     options.KnownProxies.Clear();
+    options.KnownProxies.Add(IPAddress.Loopback);      // 127.0.0.1
+    options.KnownProxies.Add(IPAddress.IPv6Loopback);  // ::1
 });
 
 // Iletisim formu: IP basina 5 dakikada 3 istek. Gercek ziyaretci IP'si icin

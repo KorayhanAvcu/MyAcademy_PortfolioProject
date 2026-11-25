@@ -68,6 +68,24 @@ public class AuthAndAccessTests
         Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
     }
 
+    // Gercek bir acigin regresyon testi: IIS'e gecildiginde port 0.0.0.0'da
+    // dinlenmeye baslayinca, yerel agdaki biri "X-Forwarded-For: 127.0.0.1"
+    // gondererek kendini loopback gosterip admin paneline ulasabiliyordu.
+    // ForwardedHeaders artik yalnizca loopback'ten gelen BAGLANTILARIN
+    // basligina guveniyor; uzak bir istemcinin basligi yok sayilmali.
+    [Theory]
+    [InlineData("/Dashboard")]
+    [InlineData("/Auth/Login")]
+    public async Task Loopback_olmayan_istemci_sahte_XForwardedFor_ile_de_404_alir(string yol)
+    {
+        var client = _factory.CreateRemoteClient();
+        client.DefaultRequestHeaders.Add("X-Forwarded-For", "127.0.0.1");
+
+        var response = await client.GetAsync(yol);
+
+        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+    }
+
     [Fact]
     public async Task Antiforgery_token_olmayan_POST_400_doner()
     {
