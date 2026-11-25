@@ -52,10 +52,15 @@ Write-Host "Yayin ciktisi bulundu: $exe" -ForegroundColor Green
 # --- Environment variable'lar -------------------------------------------
 $connectionString = "Server=$SqlServer;Database=$Database;Integrated Security=true;TrustServerCertificate=true"
 
+# AllowedHosts'a localhost MUTLAKA dahil olmali: admin paneli tasarim geregi
+# yalnizca loopback'ten erisiliyor, yani localhost reddedilirse panele hic
+# girilemez (her istek 400 "does not match an allowed host" doner).
+$allowedHosts = "$PublicHost;localhost;127.0.0.1"
+
 $vars = @{
     "ASPNETCORE_ENVIRONMENT"                 = "Production"
     "ConnectionStrings__DefaultConnection"   = $connectionString
-    "AllowedHosts"                           = $PublicHost
+    "AllowedHosts"                           = $allowedHosts
     "Site__BaseUrl"                          = "https://$PublicHost"
 }
 
