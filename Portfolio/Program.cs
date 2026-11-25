@@ -13,6 +13,14 @@ using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Windows servisi olarak calisabilmek icin. Iki isi var: Service Control
+// Manager'a "basladim" sinyalini gonderir (yoksa servis baslatilirken 1053
+// hatasi verir) ve content root'u calistirilabilir dosyanin klasorune ayarlar
+// (yoksa servisin calisma dizini System32 olur ve appsettings.json bulunamaz).
+// Servis olarak calismadiginda hicbir sey yapmaz, yani lokal gelistirme ve
+// testler etkilenmez.
+builder.Host.UseWindowsService();
+
 // Loglar hem konsola hem gunluk donen dosyaya; 14 gun saklanir (logs/ .gitignore'da).
 builder.Host.UseSerilog((context, configuration) => configuration
     .ReadFrom.Configuration(context.Configuration)
