@@ -22,6 +22,7 @@ namespace Portfolio.ViewComponents.Default_Portfolio
                 Name = p.Name,
                 Description = p.Description,
                 ImageUrl = p.ImageUrl,
+                GithubUrl = p.GithubUrl,
                 TechStacks = _context.ProjectTechStacks
                     .Where(x => x.ProjectId == p.Id)
                     .Select(x => x.TechStack.Name)

@@ -7,6 +7,9 @@
         public string Description { get; set; }
         public string ImageUrl { get; set; }
 
+        /// <summary>Kart uzerindeki "Projeyi Gor" baglantisinin hedefi.</summary>
+        public string GithubUrl { get; set; }
+
         public List<string> TechStacks { get; set; } = new();
     }
 }
